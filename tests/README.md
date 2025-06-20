@@ -26,14 +26,9 @@ pnpm test:unit:coverage
 データベースとビジネスロジックのテスト
 
 ```bash
-# Dockerでデータベースを起動してテスト実行（推奨）
-pnpm test:integration:docker
-
-# ローカルのPostgreSQLを使用
+# Dockerでデータベースを起動してテスト実行
+docker compose up -d
 pnpm test:integration
-
-# モックを使用（データベース不要）
-pnpm test:integration:mock
 ```
 
 **対象：**
