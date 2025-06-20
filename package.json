@@ -22,10 +22,8 @@
     "test:unit:coverage": "jest --config jest.unit.config.ts --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:integration": "jest --config jest.integration.config.ts",
-    "test:integration:mock": "jest --config jest.integration.mock.config.ts",
-    "test:integration:docker": "./scripts/test-integration.sh",
     "test:integration:watch": "jest --config jest.integration.config.ts --watch",
-    "test:all": "pnpm run test:unit && pnpm run test:integration:docker"
+    "test:all": "pnpm run test:unit && pnpm run test:integration"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
