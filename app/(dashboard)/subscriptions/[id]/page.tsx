@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import { SubscriptionForm } from '@/components/subscriptions/subscription-form'

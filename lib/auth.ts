@@ -1,22 +1,21 @@
-import NextAuth from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import { NextAuthOptions } from "next-auth"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
-import Credentials from "next-auth/providers/credentials"
-import Google from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import { compare } from "bcryptjs"
-import type { NextAuthConfig } from "next-auth"
 
-export const config = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -29,7 +28,7 @@ export const config = {
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email as string,
+            email: credentials.email,
           },
         })
 
@@ -38,7 +37,7 @@ export const config = {
         }
 
         const isCorrectPassword = await compare(
-          credentials.password as string,
+          credentials.password,
           user.hashedPassword
         )
 
@@ -71,8 +70,5 @@ export const config = {
   },
   pages: {
     signIn: "/login",
-    signUp: "/register",
   },
-} satisfies NextAuthConfig
-
-export const { handlers, auth, signIn, signOut } = NextAuth(config)
+}

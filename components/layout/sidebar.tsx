@@ -12,9 +12,9 @@ import {
 
 const navigation = [
   { name: 'ダッシュボード', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'サブスクリプション', href: '/dashboard/subscriptions', icon: CreditCard },
-  { name: '分析', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: '設定', href: '/dashboard/settings', icon: Settings },
+  { name: 'サブスクリプション', href: '/subscriptions', icon: CreditCard },
+  { name: '分析', href: '/analytics', icon: BarChart3 },
+  { name: '設定', href: '/settings', icon: Settings },
 ]
 
 export function Sidebar() {

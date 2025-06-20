@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
 import { SpendingChart } from '@/components/analytics/spending-chart'
 import { CategoryBreakdown } from '@/components/analytics/category-breakdown'

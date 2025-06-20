@@ -60,7 +60,7 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
         throw new Error('Failed to save subscription')
       }
 
-      router.push('/dashboard/subscriptions')
+      router.push('/subscriptions')
       router.refresh()
     } catch (error) {
       setError('保存中にエラーが発生しました')

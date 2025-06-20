@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth-helpers'
 import { ProfileSettings } from '@/components/settings/profile-settings'
 import { NotificationSettings } from '@/components/settings/notification-settings'
 import { SecuritySettings } from '@/components/settings/security-settings'

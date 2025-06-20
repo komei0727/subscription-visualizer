@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
 import { updateSubscriptionSchema } from '@/lib/validations/subscription'
 import { z } from 'zod'

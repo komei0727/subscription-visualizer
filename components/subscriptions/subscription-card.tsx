@@ -79,7 +79,7 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
           </p>
           <div className="flex gap-2">
             <button
-              onClick={() => router.push(`/dashboard/subscriptions/${subscription.id}`)}
+              onClick={() => router.push(`/subscriptions/${subscription.id}`)}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
             >
               <Edit className="h-4 w-4" />
