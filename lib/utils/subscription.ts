@@ -12,7 +12,7 @@ export function calculateMonthlyAmount(
     case 'DAILY':
       return amount * 30
     case 'WEEKLY':
-      return amount * 4.33 // 52週/12ヶ月
+      return amount * (52 / 12) // 52週/12ヶ月 ≈ 4.333...
     case 'MONTHLY':
       return amount
     case 'QUARTERLY':
@@ -107,14 +107,28 @@ export function getCurrencySymbol(currency: string): string {
 /**
  * 金額をフォーマット
  */
-export function formatAmount(amount: number, currency: string): string {
+export function formatAmount(amount: number, currency: string = 'JPY'): string {
   const symbol = getCurrencySymbol(currency)
   
   if (currency === 'JPY') {
     return `${symbol}${Math.round(amount).toLocaleString()}`
   }
   
-  return `${symbol}${amount.toFixed(2)}`
+  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+/**
+ * サブスクリプションの合計月額を計算
+ */
+export function calculateTotalAmount(
+  subscriptions: Pick<Subscription, 'amount' | 'billingCycle' | 'isActive'>[],
+  activeOnly: boolean = true
+): number {
+  const filtered = activeOnly ? subscriptions.filter(s => s.isActive) : subscriptions
+  
+  return filtered.reduce((total, sub) => {
+    return total + calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
+  }, 0)
 }
 
 /**
