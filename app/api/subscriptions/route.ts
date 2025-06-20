@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth-helpers'
+import { auth, isReadOnlyMode } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
 import { subscriptionSchema } from '@/lib/validations/subscription'
 import { z } from 'zod'
@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (isReadOnlyMode()) {
+      return NextResponse.json(
+        { error: '読み取り専用モードのため、この操作は許可されていません' },
+        { status: 403 }
+      )
     }
 
     const body = await req.json()

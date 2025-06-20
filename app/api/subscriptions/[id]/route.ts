@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth-helpers'
+import { auth, isReadOnlyMode } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
 import { updateSubscriptionSchema } from '@/lib/validations/subscription'
 import { z } from 'zod'
@@ -48,6 +48,13 @@ export async function PUT(req: NextRequest, { params }: Props) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    if (isReadOnlyMode()) {
+      return NextResponse.json(
+        { error: '読み取り専用モードのため、この操作は許可されていません' },
+        { status: 403 }
+      )
+    }
+
     const body = await req.json()
     const data = updateSubscriptionSchema.parse(body)
 
@@ -93,6 +100,13 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     const session = await auth()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (isReadOnlyMode()) {
+      return NextResponse.json(
+        { error: '読み取り専用モードのため、この操作は許可されていません' },
+        { status: 403 }
+      )
     }
 
     const subscription = await prisma.subscription.findFirst({

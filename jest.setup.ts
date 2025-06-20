@@ -93,16 +93,13 @@ jest.mock('next/server', () => ({
   NextRequest: class {
     private _body: string
     public url: string
-    
-    constructor(
-      url: string,
-      init?: RequestInit & { body?: string }
-    ) {
+
+    constructor(url: string, init?: RequestInit & { body?: string }) {
       this.url = url
       this._body = init?.body || ''
       Object.assign(this, init)
     }
-    
+
     async json() {
       return JSON.parse(this._body)
     }

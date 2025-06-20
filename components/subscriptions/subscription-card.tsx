@@ -9,9 +9,13 @@ import { cn } from '@/lib/utils'
 
 interface SubscriptionCardProps {
   subscription: Subscription
+  readOnly?: boolean
 }
 
-export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
+export function SubscriptionCard({
+  subscription,
+  readOnly = false,
+}: SubscriptionCardProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -81,22 +85,24 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
             次回支払日:{' '}
             {new Date(subscription.nextBillingDate).toLocaleDateString('ja-JP')}
           </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => router.push(`/subscriptions/${subscription.id}`)}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-              aria-label="編集"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded disabled:opacity-50"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
+          {!readOnly && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => router.push(`/subscriptions/${subscription.id}`)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
+                aria-label="編集"
+              >
+                <Edit className="h-4 w-4" />
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded disabled:opacity-50"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {subscription.notes && (

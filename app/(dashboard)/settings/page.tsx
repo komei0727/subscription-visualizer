@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma'
 
 export default async function SettingsPage() {
   const session = await auth()
-  
+
   // Fetch the complete user data from database if session exists
   let user = null
   if (session?.user?.id) {
@@ -20,7 +20,7 @@ export default async function SettingsPage() {
         image: true,
         createdAt: true,
         updatedAt: true,
-      }
+      },
     })
     user = dbUser
   }

@@ -1,6 +1,6 @@
-import { auth } from '@/lib/auth-helpers'
+import { auth, isReadOnlyMode } from '@/lib/auth-helpers'
 import { prisma } from '@/lib/prisma'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { SubscriptionForm } from '@/components/subscriptions/subscription-form'
 
 interface Props {
@@ -10,6 +10,10 @@ interface Props {
 }
 
 export default async function EditSubscriptionPage({ params }: Props) {
+  if (isReadOnlyMode()) {
+    redirect('/subscriptions')
+  }
+
   const session = await auth()
 
   const subscription = await prisma.subscription.findFirst({

@@ -1,7 +1,14 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { RegisterForm } from '@/components/auth/register-form'
+import { isRegistrationDisabled } from '@/lib/auth-helpers'
 
 export default function RegisterPage() {
+  // Redirect to login if registration is disabled
+  if (isRegistrationDisabled()) {
+    redirect('/login')
+  }
+
   return (
     <>
       <div>
