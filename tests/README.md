@@ -1,153 +1,98 @@
-# Test Suite Documentation
+# テスト戦略
 
-## Overview
-Comprehensive test suite for the Subscription Visualizer application, covering unit tests for components, utilities, and API routes.
+## テストの種類
 
-## Test Structure
-
-```
-tests/
-├── unit/                       # Unit tests
-│   ├── api/                    # API route tests
-│   │   └── subscriptions.test.ts
-│   ├── components/             # Component tests
-│   │   ├── auth/
-│   │   │   ├── login-form.test.tsx
-│   │   │   └── user-menu.test.tsx
-│   │   ├── layout/
-│   │   │   └── sidebar.test.tsx
-│   │   └── subscriptions/
-│   │       ├── subscription-card.test.tsx
-│   │       └── subscription-form.test.tsx
-│   └── lib/                    # Utility tests
-│       ├── utils.test.ts
-│       └── utils/
-│           └── subscription.test.ts
-├── integration/                # Integration tests (future)
-├── e2e/                       # E2E tests (future)
-└── utils/                     # Test utilities
-    ├── mock-data.ts
-    └── test-utils.tsx
-```
-
-## Running Tests
+### 1. 単体テスト（Unit Tests）
+UI コンポーネントとユーティリティ関数のテスト
 
 ```bash
-# Run all tests
-pnpm test
+# 単体テストのみ実行
+pnpm test:unit
 
-# Run tests in watch mode
-pnpm test:watch
+# ウォッチモードで実行
+pnpm test:unit:watch
 
-# Run tests with coverage
-pnpm test:coverage
+# カバレッジレポート付きで実行
+pnpm test:unit:coverage
+```
 
-# Run tests in CI mode
+**対象：**
+- コンポーネントの表示ロジック
+- ユーザーインタラクション
+- ユーティリティ関数
+- 純粋な計算ロジック
+
+### 2. 統合テスト（Integration Tests）
+データベースとビジネスロジックのテスト
+
+```bash
+# Dockerでデータベースを起動してテスト実行（推奨）
+pnpm test:integration:docker
+
+# ローカルのPostgreSQLを使用
+pnpm test:integration
+
+# モックを使用（データベース不要）
+pnpm test:integration:mock
+```
+
+**対象：**
+- データベース操作（CRUD）
+- ビジネスロジック
+- データバリデーション
+- 認証フロー
+
+### 3. すべてのテスト
+```bash
+# 単体テストと統合テストを実行
+pnpm test:all
+
+# CI環境での実行
 pnpm test:ci
 ```
 
-## Test Coverage Goals
+## テストカバレッジ
 
-- **Target Coverage**: 80% or higher
-- **Critical Paths**: 100% coverage for:
-  - Authentication flows
-  - CRUD operations
-  - Payment calculations
-  - API endpoints
+### 単体テスト（57テスト）
+- ✅ コンポーネント表示
+- ✅ ユーザーインタラクション
+- ✅ ユーティリティ関数
+- ✅ フォーマット処理
 
-## Component Tests
+### 統合テスト（38テスト）
+- ✅ 認証・ユーザー管理
+- ✅ サブスクリプションCRUD
+- ✅ ビジネスロジック
+- ✅ データバリデーション
+- ✅ リマインダー機能
 
-### Auth Components
-- **LoginForm**: Tests authentication flow, validation, error handling
-- **UserMenu**: Tests dropdown behavior, sign out functionality
+## ディレクトリ構造
 
-### Subscription Components
-- **SubscriptionCard**: Tests display, edit/delete actions, date calculations
-- **SubscriptionForm**: Tests form validation, submission, error handling
-
-### Layout Components
-- **Sidebar**: Tests navigation, active state, responsive behavior
-
-## Utility Tests
-
-### Core Utilities
-- **cn**: Tests class name merging with tailwind-merge
-- **formatAmount**: Tests currency formatting for JPY/USD
-- **calculateMonthlyAmount**: Tests billing cycle conversions
-- **calculateTotalAmount**: Tests subscription total calculations
-
-## API Tests
-
-### Subscription API
-- **GET /api/subscriptions**: Tests authentication, data fetching
-- **POST /api/subscriptions**: Tests creation, validation
-- **PUT /api/subscriptions/[id]**: Tests updates, authorization
-- **DELETE /api/subscriptions/[id]**: Tests deletion, authorization
-
-## Mock Data
-
-Standardized mock data is available in `tests/utils/mock-data.ts`:
-- Mock subscriptions with various billing cycles
-- Mock user data
-- Mock session data
-
-## Test Utilities
-
-Custom render function in `tests/utils/test-utils.tsx`:
-- Wraps components with necessary providers
-- Includes mock session by default
-- Re-exports testing library utilities
-
-## Best Practices
-
-1. **Naming Convention**: Use descriptive test names that explain what is being tested
-2. **Arrange-Act-Assert**: Structure tests with clear setup, action, and verification
-3. **Mock External Dependencies**: Mock API calls, navigation, and authentication
-4. **Test User Interactions**: Focus on user behavior rather than implementation details
-5. **Cleanup**: Always cleanup mocks and spies after tests
-
-## Common Testing Patterns
-
-### Testing Async Operations
-```typescript
-await waitFor(() => {
-  expect(mockFunction).toHaveBeenCalled()
-})
+```
+tests/
+├── unit/                    # 単体テスト
+│   ├── components/         # UIコンポーネント
+│   ├── lib/               # ライブラリ関数
+│   └── utils/             # テストユーティリティ
+│
+├── integration/            # 統合テスト
+│   ├── db/                # データベース操作
+│   ├── services/          # ビジネスロジック
+│   └── utils/             # テストヘルパー
+│
+└── README.md              # このファイル
 ```
 
-### Testing User Events
-```typescript
-const user = userEvent.setup()
-await user.click(button)
-await user.type(input, 'text')
-```
+## テスト方針
 
-### Testing API Calls
-```typescript
-mockFetch.mockResolvedValueOnce({
-  ok: true,
-  json: async () => ({ data: 'test' })
-})
-```
+1. **APIルートの直接テスト**は統合テストでカバー
+2. **UIコンポーネント**は単体テストでカバー
+3. **ビジネスロジック**は統合テストでカバー
+4. **純粋な関数**は単体テストでカバー
 
-## Debugging Tests
+## 削除されたテスト
 
-1. Use `screen.debug()` to see the current DOM
-2. Use `console.log` in tests (will be shown in test output)
-3. Run specific test file: `pnpm test path/to/test.tsx`
-4. Run tests matching pattern: `pnpm test --testNamePattern="LoginForm"`
-
-## CI Integration
-
-Tests are configured to run in CI with:
-- Coverage reporting
-- Limited workers for stability
-- Fail on coverage threshold violations
-
-## Future Improvements
-
-1. Add E2E tests with Playwright
-2. Add visual regression tests
-3. Add performance tests for large data sets
-4. Add accessibility tests with jest-axe
-5. Increase coverage for edge cases
+以下のテストは統合テストで十分にカバーされているため削除：
+- `tests/unit/api/subscriptions.test.ts` - API統合テストでカバー
+- `tests/unit/components/subscriptions/subscription-form.test.tsx` - ライフサイクル統合テストでカバー
+EOF < /dev/null

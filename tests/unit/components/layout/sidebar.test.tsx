@@ -1,4 +1,4 @@
-import { render, screen } from '@/tests/utils/test-utils'
+import { render, screen } from '@/tests/unit/utils/test-utils'
 import { Sidebar } from '@/components/layout/sidebar'
 import { usePathname } from 'next/navigation'
 

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@/tests/utils/test-utils'
+import { render, screen, waitFor } from '@/tests/unit/utils/test-utils'
 import userEvent from '@testing-library/user-event'
 import { LoginForm } from '@/components/auth/login-form'
 import { signIn } from 'next-auth/react'

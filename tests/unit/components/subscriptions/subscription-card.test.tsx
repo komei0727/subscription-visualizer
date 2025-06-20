@@ -1,7 +1,7 @@
-import { render, screen, waitFor } from '@/tests/utils/test-utils'
+import { render, screen, waitFor } from '@/tests/unit/utils/test-utils'
 import userEvent from '@testing-library/user-event'
 import { SubscriptionCard } from '@/components/subscriptions/subscription-card'
-import { mockSubscriptions } from '@/tests/utils/mock-data'
+import { mockSubscriptions } from '@/tests/unit/utils/mock-data'
 import { useRouter } from 'next/navigation'
 
 describe('SubscriptionCard', () => {

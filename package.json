@@ -17,14 +17,15 @@
     "db:reset": "prisma migrate reset",
     "postinstall": "prisma generate",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test:unit": "jest --config jest.unit.config.ts",
+    "test:unit:watch": "jest --config jest.unit.config.ts --watch",
+    "test:unit:coverage": "jest --config jest.unit.config.ts --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:integration": "jest --config jest.integration.config.ts",
     "test:integration:mock": "jest --config jest.integration.mock.config.ts",
     "test:integration:docker": "./scripts/test-integration.sh",
     "test:integration:watch": "jest --config jest.integration.config.ts --watch",
-    "test:all": "npm run test && npm run test:integration"
+    "test:all": "pnpm run test:unit && pnpm run test:integration:docker"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
