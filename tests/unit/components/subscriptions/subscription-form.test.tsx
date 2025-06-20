@@ -5,26 +5,14 @@ import { mockSubscriptions } from '@/tests/utils/mock-data'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 
-// Mock fetch
-global.fetch = jest.fn()
-
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
-
 describe('SubscriptionForm', () => {
-  const mockPush = jest.fn()
-  const mockBack = jest.fn()
-  const mockRefresh = jest.fn()
   const mockFetch = fetch as jest.MockedFunction<typeof fetch>
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-      back: mockBack,
-      refresh: mockRefresh,
-    })
+    global.mockRouterPush.mockClear()
+    global.mockRouterBack.mockClear()
+    global.mockRouterRefresh.mockClear()
   })
 
   it('renders form with all fields for new subscription', () => {
@@ -74,8 +62,8 @@ describe('SubscriptionForm', () => {
         },
         body: expect.stringContaining('"name":"New Service"'),
       })
-      expect(mockPush).toHaveBeenCalledWith('/subscriptions')
-      expect(mockRefresh).toHaveBeenCalled()
+      expect(global.mockRouterPush).toHaveBeenCalledWith('/subscriptions')
+      expect(global.mockRouterRefresh).toHaveBeenCalled()
     })
   })
 
@@ -103,7 +91,7 @@ describe('SubscriptionForm', () => {
         },
         body: expect.stringContaining('"name":"Updated Netflix"'),
       })
-      expect(mockPush).toHaveBeenCalledWith('/subscriptions')
+      expect(global.mockRouterPush).toHaveBeenCalledWith('/subscriptions')
     })
   })
 
@@ -134,11 +122,13 @@ describe('SubscriptionForm', () => {
     render(<SubscriptionForm />)
 
     await user.type(screen.getByLabelText(/サービス名/i), 'Test Service')
+    await user.clear(screen.getByLabelText(/金額/i))
+    await user.type(screen.getByLabelText(/金額/i), '1000')
     await user.click(screen.getByRole('button', { name: /追加/i }))
 
     await waitFor(() => {
       expect(screen.getByText('Server error')).toBeInTheDocument()
-      expect(mockPush).not.toHaveBeenCalled()
+      expect(global.mockRouterPush).not.toHaveBeenCalled()
     })
 
     consoleErrorSpy.mockRestore()
@@ -161,6 +151,8 @@ describe('SubscriptionForm', () => {
     render(<SubscriptionForm />)
 
     await user.type(screen.getByLabelText(/サービス名/i), 'Test Service')
+    await user.clear(screen.getByLabelText(/金額/i))
+    await user.type(screen.getByLabelText(/金額/i), '1000')
     
     const submitButton = screen.getByRole('button', { name: /追加/i })
     await user.click(submitButton)
@@ -181,7 +173,7 @@ describe('SubscriptionForm', () => {
     render(<SubscriptionForm />)
 
     await user.click(screen.getByRole('button', { name: /キャンセル/i }))
-    expect(mockBack).toHaveBeenCalled()
+    expect(global.mockRouterBack).toHaveBeenCalled()
   })
 
   it('formats date correctly in payload', async () => {
@@ -198,11 +190,14 @@ describe('SubscriptionForm', () => {
     const formattedDate = format(tomorrow, 'yyyy-MM-dd')
 
     await user.type(screen.getByLabelText(/サービス名/i), 'Test Service')
+    await user.clear(screen.getByLabelText(/金額/i))
+    await user.type(screen.getByLabelText(/金額/i), '1000')
     await user.clear(screen.getByLabelText(/次回支払日/i))
     await user.type(screen.getByLabelText(/次回支払日/i), formattedDate)
     await user.click(screen.getByRole('button', { name: /追加/i }))
 
     await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled()
       const callBody = JSON.parse((mockFetch.mock.calls[0][1] as any).body)
       expect(callBody.nextBillingDate).toMatch(/^\d{4}-\d{2}-\d{2}T/)
     })

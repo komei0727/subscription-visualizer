@@ -4,24 +4,13 @@ import { SubscriptionCard } from '@/components/subscriptions/subscription-card'
 import { mockSubscriptions } from '@/tests/utils/mock-data'
 import { useRouter } from 'next/navigation'
 
-// Mock fetch
-global.fetch = jest.fn()
-
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}))
-
 describe('SubscriptionCard', () => {
-  const mockPush = jest.fn()
-  const mockRefresh = jest.fn()
   const mockFetch = fetch as jest.MockedFunction<typeof fetch>
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-      refresh: mockRefresh,
-    })
+    global.mockRouterPush.mockClear()
+    global.mockRouterRefresh.mockClear()
   })
 
   afterEach(() => {
@@ -78,12 +67,10 @@ describe('SubscriptionCard', () => {
     const user = userEvent.setup()
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
-    const editButton = screen.getByRole('button', { name: '' })
-    const buttons = screen.getAllByRole('button')
-    const editBtn = buttons.find(btn => btn.querySelector('.lucide-edit'))
+    const editButton = screen.getByRole('button', { name: '編集' })
     
-    await user.click(editBtn!)
-    expect(mockPush).toHaveBeenCalledWith('/subscriptions/1')
+    await user.click(editButton)
+    expect(global.mockRouterPush).toHaveBeenCalledWith('/subscriptions/1')
   })
 
   it('handles deletion with confirmation', async () => {
@@ -107,7 +94,7 @@ describe('SubscriptionCard', () => {
     })
 
     await waitFor(() => {
-      expect(mockRefresh).toHaveBeenCalled()
+      expect(global.mockRouterRefresh).toHaveBeenCalled()
     })
 
     confirmSpy.mockRestore()
@@ -126,7 +113,7 @@ describe('SubscriptionCard', () => {
 
     expect(confirmSpy).toHaveBeenCalled()
     expect(mockFetch).not.toHaveBeenCalled()
-    expect(mockRefresh).not.toHaveBeenCalled()
+    expect(global.mockRouterRefresh).not.toHaveBeenCalled()
 
     confirmSpy.mockRestore()
   })
@@ -181,7 +168,7 @@ describe('SubscriptionCard', () => {
 
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('Delete error:', expect.any(Error))
-      expect(mockRefresh).not.toHaveBeenCalled()
+      expect(global.mockRouterRefresh).not.toHaveBeenCalled()
     })
 
     confirmSpy.mockRestore()

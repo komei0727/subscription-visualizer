@@ -61,12 +61,12 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 }
 
 export const BILLING_CYCLE_LABELS: Record<BillingCycle, string> = {
-  DAILY: '日額',
-  WEEKLY: '週額',
-  MONTHLY: '月額',
+  DAILY: '日',
+  WEEKLY: '週',
+  MONTHLY: '月',
   QUARTERLY: '四半期',
   SEMI_ANNUAL: '半年',
-  YEARLY: '年額',
+  YEARLY: '年',
   LIFETIME: '買い切り',
   CUSTOM: 'カスタム',
 }

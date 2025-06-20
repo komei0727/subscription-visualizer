@@ -1,15 +1,28 @@
 import '@testing-library/jest-dom'
+import { cleanup } from '@testing-library/react'
+
+// Cleanup after each test
+afterEach(() => {
+  cleanup()
+})
 
 // Mock next/navigation
+const mockPush = jest.fn()
+const mockReplace = jest.fn()
+const mockRefresh = jest.fn()
+const mockBack = jest.fn()
+const mockForward = jest.fn()
+const mockPrefetch = jest.fn()
+
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      refresh: jest.fn(),
-      back: jest.fn(),
-      forward: jest.fn(),
-      prefetch: jest.fn(),
+      push: mockPush,
+      replace: mockReplace,
+      refresh: mockRefresh,
+      back: mockBack,
+      forward: mockForward,
+      prefetch: mockPrefetch,
     }
   },
   usePathname() {
@@ -20,6 +33,12 @@ jest.mock('next/navigation', () => ({
   },
   redirect: jest.fn(),
 }))
+
+// Export mocks for tests
+global.mockRouterPush = mockPush
+global.mockRouterReplace = mockReplace
+global.mockRouterRefresh = mockRefresh
+global.mockRouterBack = mockBack
 
 // Mock next-auth/react
 jest.mock('next-auth/react', () => ({
@@ -56,3 +75,27 @@ if (typeof global.Headers === 'undefined') {
 
 // Mock fetch
 global.fetch = jest.fn()
+
+// Mock NextResponse
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json: (data: any, init?: ResponseInit) => {
+      const response = new Response(JSON.stringify(data), {
+        ...init,
+        headers: {
+          'content-type': 'application/json',
+          ...(init?.headers || {}),
+        },
+      })
+      return response
+    },
+  },
+  NextRequest: class {
+    constructor(public url: string, init?: RequestInit) {
+      Object.assign(this, init)
+    }
+    json() {
+      return JSON.parse(this.body as string)
+    }
+  },
+}))

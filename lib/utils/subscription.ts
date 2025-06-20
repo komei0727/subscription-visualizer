@@ -12,7 +12,7 @@ export function calculateMonthlyAmount(
     case 'DAILY':
       return amount * 30
     case 'WEEKLY':
-      return amount * (52 / 12) // 52週/12ヶ月 ≈ 4.333...
+      return amount * (52 / 12) // 52週/12ヶ月 = 4.333333...
     case 'MONTHLY':
       return amount
     case 'QUARTERLY':
@@ -109,12 +109,16 @@ export function getCurrencySymbol(currency: string): string {
  */
 export function formatAmount(amount: number, currency: string = 'JPY'): string {
   const symbol = getCurrencySymbol(currency)
+  const isNegative = amount < 0
+  const absoluteAmount = Math.abs(amount)
   
   if (currency === 'JPY') {
-    return `${symbol}${Math.round(amount).toLocaleString()}`
+    const formattedAmount = Math.round(absoluteAmount).toLocaleString()
+    return isNegative ? `-${symbol}${formattedAmount}` : `${symbol}${formattedAmount}`
   }
   
-  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const formattedAmount = absoluteAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return isNegative ? `-${symbol}${formattedAmount}` : `${symbol}${formattedAmount}`
 }
 
 /**

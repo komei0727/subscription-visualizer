@@ -4,26 +4,15 @@ import { LoginForm } from '@/components/auth/login-form'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
-jest.mock('next-auth/react', () => ({
-  ...jest.requireActual('next-auth/react'),
-  signIn: jest.fn(),
-}))
-
-jest.mock('next/navigation', () => ({
-  ...jest.requireActual('next/navigation'),
-  useRouter: jest.fn(),
-  useSearchParams: jest.fn(() => new URLSearchParams()),
-}))
-
 describe('LoginForm', () => {
-  const mockPush = jest.fn()
   const mockSignIn = signIn as jest.MockedFunction<typeof signIn>
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-    })
+    // Reset the mockSignIn for each test
+    mockSignIn.mockReset()
+    // Clear router mocks
+    global.mockRouterPush.mockClear()
   })
 
   it('renders login form with all fields', () => {
@@ -31,41 +20,47 @@ describe('LoginForm', () => {
 
     expect(screen.getByLabelText(/メールアドレス/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/パスワード/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /ログイン/i })).toBeInTheDocument()
+    // Use more specific selector since there might be multiple buttons
+    expect(screen.getByRole('button', { name: 'ログイン' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Googleでログイン/i })).toBeInTheDocument()
   })
 
-  it('displays default demo credentials', () => {
+  it('displays empty form fields', () => {
     render(<LoginForm />)
 
-    expect(screen.getByDisplayValue('demo@example.com')).toBeInTheDocument()
-    expect(screen.getByDisplayValue('demo1234')).toBeInTheDocument()
+    const emailInput = screen.getByLabelText(/メールアドレス/i) as HTMLInputElement
+    const passwordInput = screen.getByLabelText(/パスワード/i) as HTMLInputElement
+    
+    expect(emailInput.value).toBe('')
+    expect(passwordInput.value).toBe('')
   })
 
   it('handles successful login', async () => {
     const user = userEvent.setup()
-    mockSignIn.mockResolvedValueOnce({ ok: true, error: null } as any)
+    // Mock successful sign in with no error
+    mockSignIn.mockResolvedValueOnce({ error: null })
 
     render(<LoginForm />)
 
     const emailInput = screen.getByLabelText(/メールアドレス/i)
     const passwordInput = screen.getByLabelText(/パスワード/i)
-    const submitButton = screen.getByRole('button', { name: /ログイン/i })
+    const submitButton = screen.getByRole('button', { name: 'ログイン' })
 
-    await user.clear(emailInput)
-    await user.type(emailInput, 'user@example.com')
-    await user.clear(passwordInput)
+    await user.type(emailInput, 'test@example.com')
     await user.type(passwordInput, 'password123')
     await user.click(submitButton)
 
     await waitFor(() => {
       expect(mockSignIn).toHaveBeenCalledWith('credentials', {
-        email: 'user@example.com',
+        email: 'test@example.com',
         password: 'password123',
         redirect: false,
       })
-      expect(mockPush).toHaveBeenCalledWith('/dashboard')
     })
+    
+    await waitFor(() => {
+      expect(global.mockRouterPush).toHaveBeenCalledWith('/dashboard')
+    }, { timeout: 3000 })
   })
 
   it('displays error message on failed login', async () => {
@@ -74,7 +69,12 @@ describe('LoginForm', () => {
 
     render(<LoginForm />)
 
-    const submitButton = screen.getByRole('button', { name: /ログイン/i })
+    const emailInput = screen.getByLabelText(/メールアドレス/i)
+    const passwordInput = screen.getByLabelText(/パスワード/i)
+    const submitButton = screen.getByRole('button', { name: 'ログイン' })
+
+    await user.type(emailInput, 'test@example.com')
+    await user.type(passwordInput, 'wrongpassword')
     await user.click(submitButton)
 
     await waitFor(() => {
@@ -88,7 +88,12 @@ describe('LoginForm', () => {
 
     render(<LoginForm />)
 
-    const submitButton = screen.getByRole('button', { name: /ログイン/i })
+    const emailInput = screen.getByLabelText(/メールアドレス/i)
+    const passwordInput = screen.getByLabelText(/パスワード/i)
+    const submitButton = screen.getByRole('button', { name: 'ログイン' })
+
+    await user.type(emailInput, 'test@example.com')
+    await user.type(passwordInput, 'password123')
     await user.click(submitButton)
 
     expect(submitButton).toBeDisabled()
@@ -116,7 +121,7 @@ describe('LoginForm', () => {
 
     await user.clear(emailInput)
     await user.clear(passwordInput)
-    await user.click(screen.getByRole('button', { name: /ログイン/i }))
+    await user.click(screen.getByRole('button', { name: 'ログイン' }))
 
     // Note: Validation messages depend on the actual implementation
     // This test assumes HTML5 validation is being used

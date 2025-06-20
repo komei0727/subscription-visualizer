@@ -1,4 +1,4 @@
-import { render, screen } from '@/tests/utils/test-utils'
+import { render, screen, waitFor } from '@/tests/utils/test-utils'
 import userEvent from '@testing-library/user-event'
 import { UserMenu } from '@/components/auth/user-menu'
 import { useSession, signOut } from 'next-auth/react'
@@ -105,9 +105,15 @@ describe('UserMenu', () => {
     await user.click(screen.getByText('Test User'))
     expect(screen.getByText(/ログアウト/i)).toBeInTheDocument()
 
-    // Click outside
-    await user.click(document.body)
-    expect(screen.queryByText(/ログアウト/i)).not.toBeInTheDocument()
+    // Click on the overlay which is the fixed inset-0 div
+    const overlay = document.querySelector('.fixed.inset-0')
+    if (overlay) {
+      await user.click(overlay)
+    }
+    
+    await waitFor(() => {
+      expect(screen.queryByText(/ログアウト/i)).not.toBeInTheDocument()
+    })
   })
 
   it('handles sign out', async () => {

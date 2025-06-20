@@ -81,6 +81,7 @@ export function SubscriptionCard({ subscription }: SubscriptionCardProps) {
             <button
               onClick={() => router.push(`/subscriptions/${subscription.id}`)}
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
+              aria-label="編集"
             >
               <Edit className="h-4 w-4" />
             </button>

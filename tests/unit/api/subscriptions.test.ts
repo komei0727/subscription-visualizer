@@ -1,9 +1,24 @@
-import { GET, POST } from '@/app/api/subscriptions/route'
-import { auth } from '@/lib/auth-helpers'
-import { prisma } from '@/lib/prisma'
-import { NextRequest } from 'next/server'
+// Mock NextResponse before any imports
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json: jest.fn((data: any, init?: ResponseInit) => ({
+      json: async () => data,
+      status: init?.status || 200,
+      headers: new Headers(init?.headers),
+    })),
+  },
+  NextRequest: jest.fn().mockImplementation((url: string, init?: RequestInit) => ({
+    url,
+    method: init?.method || 'GET',
+    json: jest.fn().mockResolvedValue(init?.body ? JSON.parse(init.body as string) : {}),
+  })),
+}))
 
-jest.mock('@/lib/auth-helpers')
+// Mock dependencies before importing the route
+jest.mock('@/lib/auth-helpers', () => ({
+  auth: jest.fn(),
+}))
+
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     subscription: {
@@ -12,6 +27,12 @@ jest.mock('@/lib/prisma', () => ({
     },
   },
 }))
+
+// Import after mocking
+import { NextRequest, NextResponse } from 'next/server'
+import { GET, POST } from '@/app/api/subscriptions/route'
+import { auth } from '@/lib/auth-helpers'
+import { prisma } from '@/lib/prisma'
 
 describe('/api/subscriptions', () => {
   const mockAuth = auth as jest.MockedFunction<typeof auth>
