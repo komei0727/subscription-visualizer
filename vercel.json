@@ -1,0 +1,17 @@
+{
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXTAUTH_URL": "https://$VERCEL_URL"
+  },
+  "build": {
+    "env": {
+      "DATABASE_URL": "@database_url",
+      "NEXTAUTH_SECRET": "@nextauth_secret",
+      "GOOGLE_CLIENT_ID": "@google_client_id",
+      "GOOGLE_CLIENT_SECRET": "@google_client_secret"
+    }
+  }
+}
