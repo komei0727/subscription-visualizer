@@ -6,9 +6,13 @@ import { User } from '@/types/user'
 
 interface ProfileSettingsProps {
   user: User | null
+  readOnly?: boolean
 }
 
-export function ProfileSettings({ user }: ProfileSettingsProps) {
+export function ProfileSettings({
+  user,
+  readOnly = false,
+}: ProfileSettingsProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [name, setName] = useState(user?.name || '')
@@ -68,19 +72,30 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            disabled={readOnly}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
           />
         </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {isLoading ? '保存中...' : '保存'}
-          </button>
-        </div>
+        {readOnly && (
+          <div className="rounded-md bg-yellow-50 p-4">
+            <p className="text-sm text-yellow-800">
+              読み取り専用モードのため、プロフィールの変更はできません
+            </p>
+          </div>
+        )}
+
+        {!readOnly && (
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {isLoading ? '保存中...' : '保存'}
+            </button>
+          </div>
+        )}
       </form>
     </div>
   )

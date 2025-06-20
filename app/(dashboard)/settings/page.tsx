@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth-helpers'
+import { auth, isReadOnlyMode } from '@/lib/auth-helpers'
 import { ProfileSettings } from '@/components/settings/profile-settings'
 import { NotificationSettings } from '@/components/settings/notification-settings'
 import { SecuritySettings } from '@/components/settings/security-settings'
@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 
 export default async function SettingsPage() {
   const session = await auth()
+  const readOnly = isReadOnlyMode()
 
   // Fetch the complete user data from database if session exists
   let user = null
@@ -30,9 +31,9 @@ export default async function SettingsPage() {
       <h1 className="text-2xl font-bold text-gray-900">設定</h1>
 
       <div className="space-y-6">
-        <ProfileSettings user={user} />
+        <ProfileSettings user={user} readOnly={readOnly} />
         <NotificationSettings />
-        <SecuritySettings />
+        <SecuritySettings readOnly={readOnly} />
       </div>
     </div>
   )
