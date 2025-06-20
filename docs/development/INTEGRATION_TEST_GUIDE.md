@@ -4,20 +4,17 @@
 
 ## テスト環境のセットアップ
 
-### 方法1: Docker を使用（推奨）
+### Docker を使用（推奨）
 
 DockerでPostgreSQLコンテナを起動してテストを実行します：
 
 ```bash
-# Dockerでテストを実行
-pnpm test:integration:docker
-```
+# 事前にローカル環境のセットアップを完了しておく
+# .env.testファイルを作成
+cp .env.test.example .env.test
 
-このコマンドは以下を自動的に実行します：
-1. PostgreSQLコンテナの起動
-2. テストデータベースのセットアップ
-3. 統合テストの実行
-4. コンテナのクリーンアップ
+pnpm test:integration
+```
 
 ### 方法2: ローカルのPostgreSQLを使用
 
@@ -29,14 +26,6 @@ cp .env.test.example .env.test
 
 # 環境変数を読み込んでテストを実行
 source .env.test && pnpm test:integration
-```
-
-### 方法3: モックを使用（データベース不要）
-
-データベースが利用できない環境では：
-
-```bash
-pnpm test:integration:mock
 ```
 
 ## テストの構成
@@ -94,17 +83,17 @@ GitHub Actionsで自動的に統合テストが実行されます：
 docker ps
 
 # 既存のコンテナをクリーンアップ
-docker-compose -f docker-compose.test.yml down -v
+docker-compose -f docker-compose.yml down -v
 ```
 
 ### ポートの競合
 
-テスト用PostgreSQLはポート5433を使用します。競合する場合は`docker-compose.test.yml`でポートを変更してください。
+テスト用PostgreSQLはポート5433を使用します。競合する場合は`docker-compose.yml`でポートを変更してください。
 
 ### テストデータベースのリセット
 
 ```bash
 # Dockerコンテナをリセット
-docker-compose -f docker-compose.test.yml down -v
-docker-compose -f docker-compose.test.yml up -d
+docker-compose -f docker-compose.yml down -v
+docker-compose -f docker-compose.yml up -d
 ```
