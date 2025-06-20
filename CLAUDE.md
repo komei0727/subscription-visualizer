@@ -70,14 +70,15 @@ Conventional Commitsに準拠:
 - データベース操作: Prisma Test Environment
 
 ### E2Eテスト
-- Playwright使用
-- 主要なユーザーフロー
+- 後日実装予定（Playwright使用予定）
+- 主要なユーザーフローをカバー予定
 
 ### テスト実行コマンド
 ```bash
-npm run test          # ユニット・統合テスト
-npm run test:e2e      # E2Eテスト
-npm run test:coverage # カバレッジレポート
+pnpm test:unit         # ユニットテスト
+pnpm test:integration  # 統合テスト
+pnpm test:all         # すべてのテスト
+pnpm test:coverage    # カバレッジレポート
 ```
 
 ## セキュリティ要件

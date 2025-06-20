@@ -120,8 +120,7 @@ subscription-visualizer/
 │
 ├── tests/                        # テストファイル
 │   ├── unit/
-│   ├── integration/
-│   └── e2e/
+│   └── integration/
 │
 ├── .env.example                  # 環境変数サンプル
 ├── .env.local                    # ローカル環境変数（gitignore）
@@ -430,6 +429,7 @@ prisma/*.db-journal
 
 4. **テスト**
    - ユニットテスト: Jest + React Testing Library
-   - E2Eテスト: Playwright（後日追加）
+   - 統合テスト: Jest + Docker (PostgreSQL)
+   - E2Eテスト: Playwright（後日実装予定）
 
 この構造により、保守性が高く、拡張しやすいプロジェクトを構築できます。
