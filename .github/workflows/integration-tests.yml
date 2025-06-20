@@ -1,0 +1,84 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup test environment
+        run: |
+          cp .env.example .env.test
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> .env.test
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env.test
+          echo "NEXTAUTH_SECRET=test-secret-for-integration-tests" >> .env.test
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
+      - name: Run unit tests
+        run: pnpm test
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: test-secret-for-integration-tests
+        run: ./scripts/test-integration-ci.sh
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          flags: integration-tests
+          name: integration-coverage
