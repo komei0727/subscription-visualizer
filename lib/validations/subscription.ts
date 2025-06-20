@@ -6,7 +6,7 @@ export const subscriptionSchema = z.object({
   amount: z.number().positive('金額は正の数値を入力してください'),
   currency: z.string().default('JPY'),
   billingCycle: z.nativeEnum(BillingCycle),
-  nextBillingDate: z.date(),
+  nextBillingDate: z.coerce.date(),
   category: z.nativeEnum(Category),
   notes: z.string().max(500, 'メモは500文字以内で入力してください').optional(),
 })

@@ -34,6 +34,8 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
     } : {
       currency: 'JPY',
       billingCycle: BillingCycle.MONTHLY,
+      category: Category.ENTERTAINMENT,
+      nextBillingDate: new Date(),
     },
   })
 
@@ -48,22 +50,31 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
       
       const method = subscription ? 'PUT' : 'POST'
 
+      // Ensure nextBillingDate is in ISO string format
+      const payload = {
+        ...data,
+        nextBillingDate: data.nextBillingDate.toISOString(),
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to save subscription')
+        const errorData = await response.json()
+        console.error('API Error:', errorData)
+        throw new Error(errorData.error || 'Failed to save subscription')
       }
 
       router.push('/subscriptions')
       router.refresh()
     } catch (error) {
-      setError('保存中にエラーが発生しました')
+      console.error('Submit error:', error)
+      setError(error instanceof Error ? error.message : '保存中にエラーが発生しました')
     } finally {
       setIsSubmitting(false)
     }
