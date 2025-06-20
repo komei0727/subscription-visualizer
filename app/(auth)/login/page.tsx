@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { LoginForm } from '@/components/auth/login-form'
 
 export default function LoginPage() {
@@ -18,7 +19,9 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-      <LoginForm />
+      <Suspense fallback={<div>読み込み中...</div>}>
+        <LoginForm />
+      </Suspense>
     </>
   )
 }
