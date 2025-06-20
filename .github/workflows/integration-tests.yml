@@ -66,14 +66,14 @@ jobs:
         run: pnpm prisma generate
 
       - name: Run unit tests
-        run: pnpm test
+        run: pnpm test:unit
 
       - name: Run integration tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: test-secret-for-integration-tests
-        run: ./scripts/test-integration-ci.sh
+        run: pnpm test:integration
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3
