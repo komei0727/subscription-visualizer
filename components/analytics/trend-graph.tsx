@@ -1,7 +1,15 @@
 'use client'
 
 import { Subscription } from '@/types/subscription'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 import { subMonths, format, startOfMonth, endOfMonth } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -25,20 +33,20 @@ export function TrendGraph({ subscriptions }: TrendGraphProps) {
     const monthStart = startOfMonth(subMonths(new Date(), 11 - index))
     const monthEnd = endOfMonth(monthStart)
 
-    subscriptions.forEach(sub => {
+    subscriptions.forEach((sub) => {
       const createdDate = new Date(sub.createdAt)
-      
+
       // その月にアクティブだったかチェック
       if (createdDate <= monthEnd) {
         monthData.activeCount++
-        
+
         let monthlyAmount = Number(sub.amount)
         if (sub.billingCycle === 'YEARLY') {
           monthlyAmount = monthlyAmount / 12
         } else if (sub.billingCycle === 'QUARTERLY') {
           monthlyAmount = monthlyAmount / 3
         }
-        
+
         monthData.totalAmount += Math.round(monthlyAmount)
       }
     })
@@ -52,7 +60,7 @@ export function TrendGraph({ subscriptions }: TrendGraphProps) {
           <XAxis dataKey="month" />
           <YAxis yAxisId="left" orientation="left" />
           <YAxis yAxisId="right" orientation="right" />
-          <Tooltip 
+          <Tooltip
             formatter={(value: number, name: string) => {
               if (name === 'totalAmount') {
                 return [`¥${value.toLocaleString()}`, '合計金額']

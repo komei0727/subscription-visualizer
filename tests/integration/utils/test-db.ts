@@ -9,9 +9,11 @@ export function getTestDatabaseUrl(): string {
   if (process.env.TEST_DATABASE_URL) {
     return process.env.TEST_DATABASE_URL
   }
-  
+
   const dbName = `test_${randomBytes(4).toString('hex')}`
-  const baseUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5433/test_db'
+  const baseUrl =
+    process.env.DATABASE_URL ||
+    'postgresql://postgres:postgres@127.0.0.1:5433/test_db'
   const url = new URL(baseUrl)
   url.pathname = `/${dbName}`
   return url.toString()
@@ -25,12 +27,17 @@ export async function setupTestDatabase(): Promise<PrismaClient> {
   if (!process.env.TEST_DATABASE_URL) {
     try {
       // Create test database
-      execSync(`DATABASE_URL="${testDbUrl}" npx prisma db push --skip-generate --force-reset`, {
-        env: { ...process.env, DATABASE_URL: testDbUrl },
-        stdio: 'ignore' // Suppress output for cleaner test runs
-      })
+      execSync(
+        `DATABASE_URL="${testDbUrl}" npx prisma db push --skip-generate --force-reset`,
+        {
+          env: { ...process.env, DATABASE_URL: testDbUrl },
+          stdio: 'ignore', // Suppress output for cleaner test runs
+        }
+      )
     } catch (error) {
-      console.error('Failed to setup test database. Ensure PostgreSQL is running.')
+      console.error(
+        'Failed to setup test database. Ensure PostgreSQL is running.'
+      )
       throw error
     }
   }
@@ -56,12 +63,17 @@ export async function teardownTestDatabase(): Promise<void> {
   await prisma.$disconnect()
 
   // Drop test database
-  const baseUrl = process.env.DATABASE_URL!.replace(databaseUrl.pathname, '/postgres')
+  const baseUrl = process.env.DATABASE_URL!.replace(
+    databaseUrl.pathname,
+    '/postgres'
+  )
   try {
     execSync(`psql "${baseUrl}" -c "DROP DATABASE IF EXISTS ${dbName}"`)
   } catch (error) {
     // If psql is not available, try using prisma migrate reset as fallback
-    console.warn('psql not found, skipping database drop. Database will be cleaned up on next run.')
+    console.warn(
+      'psql not found, skipping database drop. Database will be cleaned up on next run.'
+    )
   }
 }
 

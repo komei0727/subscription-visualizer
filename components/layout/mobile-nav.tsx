@@ -5,12 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
-import {
-  LayoutDashboard,
-  CreditCard,
-  BarChart3,
-  Settings,
-} from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Settings } from 'lucide-react'
 
 const navigation = [
   { name: 'ダッシュボード', href: '/dashboard', icon: LayoutDashboard },
@@ -33,13 +28,23 @@ export function MobileNav() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-gray-800 bg-opacity-50" onClick={() => setIsOpen(false)}>
-          <nav className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 bg-gray-800 bg-opacity-50"
+          onClick={() => setIsOpen(false)}
+        >
+          <nav
+            className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">メニュー</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                メニュー
+              </h2>
               <div className="space-y-1">
                 {navigation.map((item) => {
-                  const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+                  const isActive =
+                    pathname === item.href ||
+                    pathname.startsWith(item.href + '/')
                   return (
                     <Link
                       key={item.name}

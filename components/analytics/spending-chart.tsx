@@ -1,7 +1,15 @@
 'use client'
 
 import { Subscription } from '@/types/subscription'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 import { subMonths, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -20,24 +28,26 @@ export function SpendingChart({ subscriptions }: SpendingChartProps) {
   })
 
   // 現在アクティブなサブスクリプションの月額を計算
-  subscriptions.filter(s => s.isActive).forEach(sub => {
-    let monthlyAmount = Number(sub.amount)
-    
-    if (sub.billingCycle === 'YEARLY') {
-      monthlyAmount = monthlyAmount / 12
-    } else if (sub.billingCycle === 'QUARTERLY') {
-      monthlyAmount = monthlyAmount / 3
-    }
+  subscriptions
+    .filter((s) => s.isActive)
+    .forEach((sub) => {
+      let monthlyAmount = Number(sub.amount)
 
-    // 作成日以降の月にのみ金額を追加
-    const createdDate = new Date(sub.createdAt)
-    months.forEach(monthData => {
-      const monthDate = new Date(monthData.month)
-      if (monthDate >= createdDate) {
-        monthData.amount += Math.round(monthlyAmount)
+      if (sub.billingCycle === 'YEARLY') {
+        monthlyAmount = monthlyAmount / 12
+      } else if (sub.billingCycle === 'QUARTERLY') {
+        monthlyAmount = monthlyAmount / 3
       }
+
+      // 作成日以降の月にのみ金額を追加
+      const createdDate = new Date(sub.createdAt)
+      months.forEach((monthData) => {
+        const monthDate = new Date(monthData.month)
+        if (monthDate >= createdDate) {
+          monthData.amount += Math.round(monthlyAmount)
+        }
+      })
     })
-  })
 
   return (
     <div className="h-64">
@@ -47,10 +57,10 @@ export function SpendingChart({ subscriptions }: SpendingChartProps) {
           <XAxis dataKey="month" />
           <YAxis />
           <Tooltip formatter={(value) => `¥${value.toLocaleString()}`} />
-          <Line 
-            type="monotone" 
-            dataKey="amount" 
-            stroke="#4F46E5" 
+          <Line
+            type="monotone"
+            dataKey="amount"
+            stroke="#4F46E5"
             strokeWidth={2}
             dot={{ fill: '#4F46E5' }}
           />

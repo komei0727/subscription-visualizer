@@ -52,7 +52,10 @@ describe('SubscriptionCard', () => {
       nextBillingDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
     }
     rerender(<SubscriptionCard subscription={warningSub} />)
-    expect(screen.getByText('10日後')).toHaveClass('bg-yellow-100', 'text-yellow-800')
+    expect(screen.getByText('10日後')).toHaveClass(
+      'bg-yellow-100',
+      'text-yellow-800'
+    )
 
     // Test green color for > 14 days
     const safeSub = {
@@ -60,7 +63,10 @@ describe('SubscriptionCard', () => {
       nextBillingDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
     }
     rerender(<SubscriptionCard subscription={safeSub} />)
-    expect(screen.getByText('20日後')).toHaveClass('bg-green-100', 'text-green-800')
+    expect(screen.getByText('20日後')).toHaveClass(
+      'bg-green-100',
+      'text-green-800'
+    )
   })
 
   it('navigates to edit page on edit button click', async () => {
@@ -68,7 +74,7 @@ describe('SubscriptionCard', () => {
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
     const editButton = screen.getByRole('button', { name: '編集' })
-    
+
     await user.click(editButton)
     expect(global.mockRouterPush).toHaveBeenCalledWith('/subscriptions/1')
   })
@@ -84,11 +90,13 @@ describe('SubscriptionCard', () => {
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
     const buttons = screen.getAllByRole('button')
-    const deleteBtn = buttons.find(btn => btn.querySelector('.lucide-trash2'))
+    const deleteBtn = buttons.find((btn) => btn.querySelector('.lucide-trash2'))
 
     await user.click(deleteBtn!)
 
-    expect(confirmSpy).toHaveBeenCalledWith('このサブスクリプションを削除してもよろしいですか？')
+    expect(confirmSpy).toHaveBeenCalledWith(
+      'このサブスクリプションを削除してもよろしいですか？'
+    )
     expect(mockFetch).toHaveBeenCalledWith('/api/subscriptions/1', {
       method: 'DELETE',
     })
@@ -107,7 +115,7 @@ describe('SubscriptionCard', () => {
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
     const buttons = screen.getAllByRole('button')
-    const deleteBtn = buttons.find(btn => btn.querySelector('.lucide-trash2'))
+    const deleteBtn = buttons.find((btn) => btn.querySelector('.lucide-trash2'))
 
     await user.click(deleteBtn!)
 
@@ -121,22 +129,23 @@ describe('SubscriptionCard', () => {
   it('disables delete button during deletion', async () => {
     const user = userEvent.setup()
     const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true)
-    
+
     // Create a promise that we can control
     let resolveDelete: () => void
     const deletePromise = new Promise<Response>((resolve) => {
-      resolveDelete = () => resolve({
-        ok: true,
-        json: async () => ({ success: true }),
-      } as Response)
+      resolveDelete = () =>
+        resolve({
+          ok: true,
+          json: async () => ({ success: true }),
+        } as Response)
     })
-    
+
     mockFetch.mockReturnValueOnce(deletePromise)
 
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
     const buttons = screen.getAllByRole('button')
-    const deleteBtn = buttons.find(btn => btn.querySelector('.lucide-trash2'))
+    const deleteBtn = buttons.find((btn) => btn.querySelector('.lucide-trash2'))
 
     await user.click(deleteBtn!)
 
@@ -144,7 +153,7 @@ describe('SubscriptionCard', () => {
 
     // Resolve the deletion
     resolveDelete!()
-    
+
     await waitFor(() => {
       expect(deleteBtn).not.toBeDisabled()
     })
@@ -156,18 +165,21 @@ describe('SubscriptionCard', () => {
     const user = userEvent.setup()
     const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true)
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-    
+
     mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
     render(<SubscriptionCard subscription={mockSubscriptions[0]} />)
 
     const buttons = screen.getAllByRole('button')
-    const deleteBtn = buttons.find(btn => btn.querySelector('.lucide-trash2'))
+    const deleteBtn = buttons.find((btn) => btn.querySelector('.lucide-trash2'))
 
     await user.click(deleteBtn!)
 
     await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Delete error:', expect.any(Error))
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Delete error:',
+        expect.any(Error)
+      )
       expect(global.mockRouterRefresh).not.toHaveBeenCalled()
     })
 
@@ -182,7 +194,7 @@ describe('SubscriptionCard', () => {
     }
 
     render(<SubscriptionCard subscription={subscriptionWithoutNotes} />)
-    
+
     expect(screen.queryByText('Premium plan')).not.toBeInTheDocument()
   })
 })

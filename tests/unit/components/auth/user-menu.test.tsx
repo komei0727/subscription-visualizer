@@ -110,7 +110,7 @@ describe('UserMenu', () => {
     if (overlay) {
       await user.click(overlay)
     }
-    
+
     await waitFor(() => {
       expect(screen.queryByText(/ログアウト/i)).not.toBeInTheDocument()
     })
@@ -133,7 +133,7 @@ describe('UserMenu', () => {
 
     // Open dropdown
     await user.click(screen.getByText('Test User'))
-    
+
     // Click sign out
     await user.click(screen.getByText(/ログアウト/i))
 

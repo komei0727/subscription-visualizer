@@ -24,15 +24,21 @@ describe('Validation Service Integration Tests', () => {
       expect(result.success).toBe(false)
       if (!result.success) {
         // Check name validation
-        const nameError = result.error.issues.find(issue => issue.path[0] === 'name')
+        const nameError = result.error.issues.find(
+          (issue) => issue.path[0] === 'name'
+        )
         expect(nameError).toBeDefined()
         expect(nameError?.message).toBe('名前は必須です')
-        
+
         // Check other required fields
-        const amountError = result.error.issues.find(issue => issue.path[0] === 'amount')
+        const amountError = result.error.issues.find(
+          (issue) => issue.path[0] === 'amount'
+        )
         expect(amountError).toBeDefined()
-        
-        const billingCycleError = result.error.issues.find(issue => issue.path[0] === 'billingCycle')
+
+        const billingCycleError = result.error.issues.find(
+          (issue) => issue.path[0] === 'billingCycle'
+        )
         expect(billingCycleError).toBeDefined()
       }
     })

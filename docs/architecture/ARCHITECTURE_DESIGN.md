@@ -3,6 +3,7 @@
 ## 1. 設計方針
 
 ### 1.1 基本原則
+
 Bobby型のシンプルなサブスクリプショントラッカーとして、以下の原則で設計：
 
 - **シンプリシティファースト**: 複雑な機能は避け、コア機能に集中
@@ -11,6 +12,7 @@ Bobby型のシンプルなサブスクリプショントラッカーとして、
 - **低コスト運用**: 最小限のインフラストラクチャ
 
 ### 1.2 MVP機能
+
 1. ユーザー登録・ログイン
 2. サブスクリプションの手動登録・編集・削除
 3. 月次支出の可視化
@@ -20,11 +22,13 @@ Bobby型のシンプルなサブスクリプショントラッカーとして、
 ## 2. 技術スタック
 
 ### 2.1 選定理由
+
 - **開発効率**: フルスタックTypeScriptで統一
 - **デプロイ簡易性**: Vercelへのワンクリックデプロイ
 - **コスト効率**: サーバーレス実行で従量課金
 
 ### 2.2 具体的な技術
+
 ```
 フロントエンド:
   - Next.js 14 (App Router)
@@ -50,6 +54,7 @@ Bobby型のシンプルなサブスクリプショントラッカーとして、
 ## 3. アーキテクチャ概要
 
 ### 3.1 シンプルな3層構造
+
 ```
 ┌─────────────────────────────────────┐
 │     クライアント (Next.js App)      │
@@ -74,6 +79,7 @@ Bobby型のシンプルなサブスクリプショントラッカーとして、
 ## 4. データベース設計
 
 ### 4.1 最小限のテーブル構成
+
 ```prisma
 // schema.prisma
 
@@ -85,7 +91,7 @@ model User {
   image           String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-  
+
   accounts        Account[]
   sessions        Session[]
   subscriptions   Subscription[]
@@ -104,9 +110,9 @@ model Subscription {
   notes           String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-  
+
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId])
   @@index([nextBillingDate])
 }
@@ -144,6 +150,7 @@ model Session {
 ## 5. API設計
 
 ### 5.1 RESTful エンドポイント
+
 ```typescript
 // Subscription CRUD
 GET    /api/subscriptions          // 一覧取得
@@ -163,12 +170,13 @@ DELETE /api/user/account          // アカウント削除
 ```
 
 ### 5.2 API実装例
+
 ```typescript
 // app/api/subscriptions/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
-import prisma from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { z } from 'zod'
+import prisma from '@/lib/prisma'
 
 const subscriptionSchema = z.object({
   name: z.string().min(1),
@@ -176,33 +184,33 @@ const subscriptionSchema = z.object({
   currency: z.string().default('JPY'),
   billingCycle: z.enum(['MONTHLY', 'YEARLY', 'QUARTERLY', 'CUSTOM']),
   nextBillingDate: z.string().datetime(),
-  category: z.enum(['ENTERTAINMENT', 'PRODUCTIVITY', /* ... */]),
+  category: z.enum(['ENTERTAINMENT', 'PRODUCTIVITY' /* ... */]),
   notes: z.string().optional(),
-});
+})
 
 export async function POST(req: NextRequest) {
-  const session = await getServerSession();
+  const session = await getServerSession()
   if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const body = await req.json();
-    const data = subscriptionSchema.parse(body);
-    
+    const body = await req.json()
+    const data = subscriptionSchema.parse(body)
+
     const subscription = await prisma.subscription.create({
       data: {
         ...data,
         userId: session.user.id,
       },
-    });
-    
-    return NextResponse.json(subscription);
+    })
+
+    return NextResponse.json(subscription)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json({ error: error.errors }, { status: 400 })
     }
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
 ```
@@ -210,6 +218,7 @@ export async function POST(req: NextRequest) {
 ## 6. フロントエンド設計
 
 ### 6.1 ページ構成
+
 ```
 app/
 ├── (auth)/
@@ -230,6 +239,7 @@ app/
 ```
 
 ### 6.2 コンポーネント構成
+
 ```typescript
 // components/subscription-card.tsx
 interface SubscriptionCardProps {
@@ -243,7 +253,7 @@ export function SubscriptionCard({ subscription, onEdit, onDelete }: Subscriptio
     new Date(subscription.nextBillingDate),
     new Date()
   );
-  
+
   return (
     <Card>
       <CardHeader>
@@ -283,47 +293,52 @@ export function SubscriptionCard({ subscription, onEdit, onDelete }: Subscriptio
 ## 7. 状態管理
 
 ### 7.1 Zustandによるクライアント状態管理
+
 ```typescript
 // stores/subscription-store.ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 interface SubscriptionStore {
-  subscriptions: Subscription[];
-  isLoading: boolean;
-  fetchSubscriptions: () => Promise<void>;
-  addSubscription: (data: CreateSubscriptionDto) => Promise<void>;
-  updateSubscription: (id: string, data: UpdateSubscriptionDto) => Promise<void>;
-  deleteSubscription: (id: string) => Promise<void>;
+  subscriptions: Subscription[]
+  isLoading: boolean
+  fetchSubscriptions: () => Promise<void>
+  addSubscription: (data: CreateSubscriptionDto) => Promise<void>
+  updateSubscription: (id: string, data: UpdateSubscriptionDto) => Promise<void>
+  deleteSubscription: (id: string) => Promise<void>
 }
 
 export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   subscriptions: [],
   isLoading: false,
-  
+
   fetchSubscriptions: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true })
     try {
-      const res = await fetch('/api/subscriptions');
-      const data = await res.json();
-      set({ subscriptions: data });
+      const res = await fetch('/api/subscriptions')
+      const data = await res.json()
+      set({ subscriptions: data })
     } finally {
-      set({ isLoading: false });
+      set({ isLoading: false })
     }
   },
   // ... 他のメソッド
-}));
+}))
 ```
 
 ## 8. 通知機能
 
 ### 8.1 シンプルなメール通知
+
 ```typescript
 // lib/notifications.ts
-import { Resend } from 'resend';
+import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function sendBillingReminder(user: User, subscription: Subscription) {
+export async function sendBillingReminder(
+  user: User,
+  subscription: Subscription
+) {
   await resend.emails.send({
     from: 'noreply@subscription-visualizer.com',
     to: user.email,
@@ -333,14 +348,14 @@ export async function sendBillingReminder(user: User, subscription: Subscription
       <p>${subscription.name}の次回支払い日は${formatDate(subscription.nextBillingDate)}です。</p>
       <p>金額: ¥${subscription.amount.toLocaleString()}</p>
     `,
-  });
+  })
 }
 
 // Vercel Cronジョブで毎日実行
 export async function checkUpcomingBillings() {
-  const tomorrow = addDays(new Date(), 1);
-  const weekLater = addDays(new Date(), 7);
-  
+  const tomorrow = addDays(new Date(), 1)
+  const weekLater = addDays(new Date(), 7)
+
   const subscriptions = await prisma.subscription.findMany({
     where: {
       nextBillingDate: {
@@ -352,10 +367,10 @@ export async function checkUpcomingBillings() {
     include: {
       user: true,
     },
-  });
-  
+  })
+
   for (const subscription of subscriptions) {
-    await sendBillingReminder(subscription.user, subscription);
+    await sendBillingReminder(subscription.user, subscription)
   }
 }
 ```
@@ -363,6 +378,7 @@ export async function checkUpcomingBillings() {
 ## 9. デプロイメント
 
 ### 9.1 環境変数
+
 ```env
 # .env.local
 DATABASE_URL="postgresql://..."
@@ -372,6 +388,7 @@ RESEND_API_KEY="..."
 ```
 
 ### 9.2 Vercelデプロイ設定
+
 ```json
 // vercel.json
 {
@@ -387,6 +404,7 @@ RESEND_API_KEY="..."
 ## 10. セキュリティ
 
 ### 10.1 基本的なセキュリティ対策
+
 - **認証**: NextAuth.jsによるセッション管理
 - **認可**: API Routeでのセッション確認
 - **入力検証**: Zodによるスキーマ検証
@@ -394,38 +412,42 @@ RESEND_API_KEY="..."
 - **SQLインジェクション対策**: Prisma ORM使用
 
 ### 10.2 データ保護
+
 ```typescript
 // middleware.ts
-import { withAuth } from "next-auth/middleware";
+import { withAuth } from 'next-auth/middleware'
 
 export default withAuth({
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
-});
+})
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/api/subscriptions/:path*",
-    "/api/analytics/:path*",
+    '/dashboard/:path*',
+    '/api/subscriptions/:path*',
+    '/api/analytics/:path*',
   ],
-};
+}
 ```
 
 ## 11. 今後の拡張計画
 
 ### Phase 1 (MVP)
+
 - [x] 基本的なCRUD機能
 - [x] シンプルな分析機能
 - [x] メール通知
 
 ### Phase 2
+
 - [ ] CSVインポート/エクスポート
 - [ ] より詳細な分析機能
 - [ ] 複数通貨対応
 
 ### Phase 3
+
 - [ ] モバイルアプリ（React Native）
 - [ ] 家族共有機能
 - [ ] APIの公開

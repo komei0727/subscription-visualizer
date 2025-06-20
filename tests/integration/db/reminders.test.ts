@@ -11,7 +11,7 @@ describe('Reminder Database Operations', () => {
     const userData = await createTestUser()
     testUser = await prisma.user.create({ data: userData })
     testUserId = testUser.id
-    
+
     // Create a subscription for reminder tests
     subscription = await prisma.subscription.create({
       data: createTestSubscription(testUserId, {
@@ -80,7 +80,7 @@ describe('Reminder Database Operations', () => {
     ])
 
     expect(reminders).toHaveLength(3)
-    expect(reminders.map(r => r.daysBefore).sort()).toEqual([1, 3, 7])
+    expect(reminders.map((r) => r.daysBefore).sort()).toEqual([1, 3, 7])
   })
 
   it('tracks when reminders are sent', async () => {
@@ -116,12 +116,14 @@ describe('Reminder Database Operations', () => {
       // Already sent today
       prisma.reminder.create({
         data: {
-          subscriptionId: (await prisma.subscription.create({
-            data: createTestSubscription(testUserId, {
-              name: 'Already Notified',
-              nextBillingDate: addDays(new Date(), 3),
-            }),
-          })).id,
+          subscriptionId: (
+            await prisma.subscription.create({
+              data: createTestSubscription(testUserId, {
+                name: 'Already Notified',
+                nextBillingDate: addDays(new Date(), 3),
+              }),
+            })
+          ).id,
           daysBefore: 2,
           isEnabled: true,
           lastSentAt: new Date(),
@@ -130,12 +132,14 @@ describe('Reminder Database Operations', () => {
       // Disabled
       prisma.reminder.create({
         data: {
-          subscriptionId: (await prisma.subscription.create({
-            data: createTestSubscription(testUserId, {
-              name: 'Disabled Reminder',
-              nextBillingDate: addDays(new Date(), 2),
-            }),
-          })).id,
+          subscriptionId: (
+            await prisma.subscription.create({
+              data: createTestSubscription(testUserId, {
+                name: 'Disabled Reminder',
+                nextBillingDate: addDays(new Date(), 2),
+              }),
+            })
+          ).id,
           daysBefore: 1,
           isEnabled: false,
         },

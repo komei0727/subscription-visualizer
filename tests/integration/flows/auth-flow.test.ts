@@ -19,7 +19,9 @@ describe('Authentication Flow Integration Tests', () => {
     jest.spyOn(require('next-auth'), 'getServerSession').mockResolvedValue(null)
 
     // Try to get subscriptions without auth
-    const getRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const getRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const getResponse = await GET(getRequest)
     const getResult = await parseResponse(getResponse)
 
@@ -27,17 +29,20 @@ describe('Authentication Flow Integration Tests', () => {
     expect(getResult.data).toHaveProperty('error', 'Unauthorized')
 
     // Try to create subscription without auth
-    const postRequest = createTestRequest('http://localhost:3000/api/subscriptions', {
-      method: 'POST',
-      body: {
-        name: 'Test Service',
-        amount: 1000,
-        currency: 'JPY',
-        billingCycle: BillingCycle.MONTHLY,
-        category: Category.OTHER,
-        nextBillingDate: new Date().toISOString(),
-      },
-    })
+    const postRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions',
+      {
+        method: 'POST',
+        body: {
+          name: 'Test Service',
+          amount: 1000,
+          currency: 'JPY',
+          billingCycle: BillingCycle.MONTHLY,
+          category: Category.OTHER,
+          nextBillingDate: new Date().toISOString(),
+        },
+      }
+    )
     const postResponse = await POST(postRequest)
     const postResult = await parseResponse(postResponse)
 
@@ -47,7 +52,10 @@ describe('Authentication Flow Integration Tests', () => {
 
   it('allows access with valid authentication', async () => {
     // Mock authenticated session
-    const mockGetServerSession = jest.spyOn(require('next-auth'), 'getServerSession')
+    const mockGetServerSession = jest.spyOn(
+      require('next-auth'),
+      'getServerSession'
+    )
     mockGetServerSession.mockResolvedValue({
       user: {
         id: testUserId,
@@ -58,7 +66,9 @@ describe('Authentication Flow Integration Tests', () => {
     })
 
     // Get subscriptions with auth
-    const getRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const getRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const getResponse = await GET(getRequest)
     const getResult = await parseResponse(getResponse)
 
@@ -66,17 +76,20 @@ describe('Authentication Flow Integration Tests', () => {
     expect(Array.isArray(getResult.data)).toBe(true)
 
     // Create subscription with auth
-    const postRequest = createTestRequest('http://localhost:3000/api/subscriptions', {
-      method: 'POST',
-      body: {
-        name: 'Authenticated Service',
-        amount: 2000,
-        currency: 'JPY',
-        billingCycle: BillingCycle.MONTHLY,
-        category: Category.SOFTWARE,
-        nextBillingDate: new Date().toISOString(),
-      },
-    })
+    const postRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions',
+      {
+        method: 'POST',
+        body: {
+          name: 'Authenticated Service',
+          amount: 2000,
+          currency: 'JPY',
+          billingCycle: BillingCycle.MONTHLY,
+          category: Category.SOFTWARE,
+          nextBillingDate: new Date().toISOString(),
+        },
+      }
+    )
     const postResponse = await POST(postRequest)
     const postResult = await parseResponse(postResponse)
 
@@ -140,7 +153,9 @@ describe('Authentication Flow Integration Tests', () => {
     })
 
     // User 1 should only see their subscriptions
-    const user1Request = createTestRequest('http://localhost:3000/api/subscriptions')
+    const user1Request = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const user1Response = await GET(user1Request)
     const user1Result = await parseResponse(user1Response)
 
@@ -162,7 +177,9 @@ describe('Authentication Flow Integration Tests', () => {
     })
 
     // User 2 should only see their subscriptions
-    const user2Request = createTestRequest('http://localhost:3000/api/subscriptions')
+    const user2Request = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const user2Response = await GET(user2Request)
     const user2Result = await parseResponse(user2Response)
 
@@ -225,9 +242,15 @@ describe('Authentication Flow Integration Tests', () => {
     })
 
     // Other user tries to access test user's subscription
-    const { GET: GET_BY_ID } = await import('@/app/api/subscriptions/[id]/route')
-    const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`)
-    const response = await GET_BY_ID(request, { params: { id: subscription.id } })
+    const { GET: GET_BY_ID } = await import(
+      '@/app/api/subscriptions/[id]/route'
+    )
+    const request = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscription.id}`
+    )
+    const response = await GET_BY_ID(request, {
+      params: { id: subscription.id },
+    })
     const result = await parseResponse(response)
 
     // Should return 404 (not found) rather than 403 (forbidden) to avoid

@@ -54,7 +54,10 @@ export function SecuritySettings() {
       <h2 className="text-lg font-semibold mb-4">セキュリティ設定</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="current-password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="current-password"
+            className="block text-sm font-medium text-gray-700"
+          >
             現在のパスワード
           </label>
           <input
@@ -68,7 +71,10 @@ export function SecuritySettings() {
         </div>
 
         <div>
-          <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="new-password"
+            className="block text-sm font-medium text-gray-700"
+          >
             新しいパスワード
           </label>
           <input
@@ -82,7 +88,10 @@ export function SecuritySettings() {
         </div>
 
         <div>
-          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="confirm-password"
+            className="block text-sm font-medium text-gray-700"
+          >
             新しいパスワード（確認）
           </label>
           <input

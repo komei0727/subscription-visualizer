@@ -6,7 +6,7 @@ import { SubscriptionList } from '@/components/subscriptions/subscription-list'
 
 export default async function SubscriptionsPage() {
   const session = await auth()
-  
+
   const subscriptions = await prisma.subscription.findMany({
     where: {
       userId: session?.user?.id,
@@ -31,7 +31,9 @@ export default async function SubscriptionsPage() {
 
       {subscriptions.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500">まだサブスクリプションが登録されていません</p>
+          <p className="text-gray-500">
+            まだサブスクリプションが登録されていません
+          </p>
           <Link
             href="/subscriptions/new"
             className="inline-block mt-4 text-indigo-600 hover:text-indigo-500"

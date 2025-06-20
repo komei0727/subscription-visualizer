@@ -1,4 +1,8 @@
-import { formatAmount, calculateMonthlyAmount, calculateTotalAmount } from '@/lib/utils/subscription'
+import {
+  formatAmount,
+  calculateMonthlyAmount,
+  calculateTotalAmount,
+} from '@/lib/utils/subscription'
 import { BillingCycle } from '@/types/subscription'
 
 describe('Subscription Utilities', () => {
@@ -35,7 +39,10 @@ describe('Subscription Utilities', () => {
 
     it('calculates correct amount for WEEKLY billing', () => {
       // Approximately 4.33 weeks per month
-      expect(calculateMonthlyAmount(1000, BillingCycle.WEEKLY)).toBeCloseTo(4333.33, 2)
+      expect(calculateMonthlyAmount(1000, BillingCycle.WEEKLY)).toBeCloseTo(
+        4333.33,
+        2
+      )
     })
 
     it('calculates correct amount for DAILY billing', () => {
@@ -63,8 +70,8 @@ describe('Subscription Utilities', () => {
     })
 
     it('handles fractional amounts', () => {
-      expect(calculateMonthlyAmount(100.50, BillingCycle.MONTHLY)).toBe(100.50)
-      expect(calculateMonthlyAmount(1206, BillingCycle.YEARLY)).toBe(100.50)
+      expect(calculateMonthlyAmount(100.5, BillingCycle.MONTHLY)).toBe(100.5)
+      expect(calculateMonthlyAmount(1206, BillingCycle.YEARLY)).toBe(100.5)
     })
   })
 
@@ -112,7 +119,7 @@ describe('Subscription Utilities', () => {
     })
 
     it('handles all inactive subscriptions', () => {
-      const inactiveSubscriptions = mockSubscriptions.map(sub => ({
+      const inactiveSubscriptions = mockSubscriptions.map((sub) => ({
         ...sub,
         isActive: false,
       }))
@@ -122,9 +129,24 @@ describe('Subscription Utilities', () => {
 
     it('handles mixed billing cycles', () => {
       const mixedSubscriptions = [
-        { id: '1', amount: 100, billingCycle: BillingCycle.DAILY, isActive: true },
-        { id: '2', amount: 1000, billingCycle: BillingCycle.WEEKLY, isActive: true },
-        { id: '3', amount: 3000, billingCycle: BillingCycle.QUARTERLY, isActive: true },
+        {
+          id: '1',
+          amount: 100,
+          billingCycle: BillingCycle.DAILY,
+          isActive: true,
+        },
+        {
+          id: '2',
+          amount: 1000,
+          billingCycle: BillingCycle.WEEKLY,
+          isActive: true,
+        },
+        {
+          id: '3',
+          amount: 3000,
+          billingCycle: BillingCycle.QUARTERLY,
+          isActive: true,
+        },
       ] as any[]
 
       const total = calculateTotalAmount(mixedSubscriptions)
@@ -134,8 +156,18 @@ describe('Subscription Utilities', () => {
 
     it('handles decimal amounts correctly', () => {
       const decimalSubscriptions = [
-        { id: '1', amount: 99.99, billingCycle: BillingCycle.MONTHLY, isActive: true },
-        { id: '2', amount: 199.99, billingCycle: BillingCycle.MONTHLY, isActive: true },
+        {
+          id: '1',
+          amount: 99.99,
+          billingCycle: BillingCycle.MONTHLY,
+          isActive: true,
+        },
+        {
+          id: '2',
+          amount: 199.99,
+          billingCycle: BillingCycle.MONTHLY,
+          isActive: true,
+        },
       ] as any[]
 
       expect(calculateTotalAmount(decimalSubscriptions)).toBeCloseTo(299.98, 2)

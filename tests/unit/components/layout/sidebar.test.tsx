@@ -27,7 +27,9 @@ describe('Sidebar', () => {
     mockUsePathname.mockReturnValue('/subscriptions')
     render(<Sidebar />)
 
-    const subscriptionsLink = screen.getByText('サブスクリプション').closest('a')
+    const subscriptionsLink = screen
+      .getByText('サブスクリプション')
+      .closest('a')
     expect(subscriptionsLink).toHaveClass('bg-gray-100', 'text-gray-900')
 
     const dashboardLink = screen.getByText('ダッシュボード').closest('a')
@@ -39,7 +41,9 @@ describe('Sidebar', () => {
     mockUsePathname.mockReturnValue('/subscriptions/new')
     render(<Sidebar />)
 
-    const subscriptionsLink = screen.getByText('サブスクリプション').closest('a')
+    const subscriptionsLink = screen
+      .getByText('サブスクリプション')
+      .closest('a')
     expect(subscriptionsLink).toHaveClass('bg-gray-100', 'text-gray-900')
   })
 
@@ -49,7 +53,7 @@ describe('Sidebar', () => {
 
     // Check that icons are rendered (by checking SVG elements)
     const links = screen.getAllByRole('link')
-    links.forEach(link => {
+    links.forEach((link) => {
       expect(link.querySelector('svg')).toBeInTheDocument()
     })
   })
@@ -58,10 +62,22 @@ describe('Sidebar', () => {
     mockUsePathname.mockReturnValue('/dashboard')
     render(<Sidebar />)
 
-    expect(screen.getByText('ダッシュボード').closest('a')).toHaveAttribute('href', '/dashboard')
-    expect(screen.getByText('サブスクリプション').closest('a')).toHaveAttribute('href', '/subscriptions')
-    expect(screen.getByText('分析').closest('a')).toHaveAttribute('href', '/analytics')
-    expect(screen.getByText('設定').closest('a')).toHaveAttribute('href', '/settings')
+    expect(screen.getByText('ダッシュボード').closest('a')).toHaveAttribute(
+      'href',
+      '/dashboard'
+    )
+    expect(screen.getByText('サブスクリプション').closest('a')).toHaveAttribute(
+      'href',
+      '/subscriptions'
+    )
+    expect(screen.getByText('分析').closest('a')).toHaveAttribute(
+      'href',
+      '/analytics'
+    )
+    expect(screen.getByText('設定').closest('a')).toHaveAttribute(
+      'href',
+      '/settings'
+    )
   })
 
   it('is hidden on mobile', () => {

@@ -11,7 +11,7 @@ interface Props {
 
 export default async function EditSubscriptionPage({ params }: Props) {
   const session = await auth()
-  
+
   const subscription = await prisma.subscription.findFirst({
     where: {
       id: params.id,

@@ -6,7 +6,7 @@ describe('Authentication Database Operations', () => {
   it('creates a user with hashed password', async () => {
     const password = 'securePassword123'
     const hashedPassword = await hash(password, 10)
-    
+
     const user = await prisma.user.create({
       data: {
         email: 'auth-test@example.com',
@@ -19,7 +19,7 @@ describe('Authentication Database Operations', () => {
     expect(user.email).toBe('auth-test@example.com')
     expect(user.hashedPassword).toBeDefined()
     expect(user.hashedPassword).not.toBe(password)
-    
+
     // Verify password can be checked
     const isValid = await compare(password, user.hashedPassword!)
     expect(isValid).toBe(true)
@@ -27,14 +27,12 @@ describe('Authentication Database Operations', () => {
 
   it('enforces unique email constraint', async () => {
     const userData = await createTestUser({ email: 'duplicate@example.com' })
-    
+
     // Create first user
     await prisma.user.create({ data: userData })
-    
+
     // Try to create second user with same email
-    await expect(
-      prisma.user.create({ data: userData })
-    ).rejects.toThrow()
+    await expect(prisma.user.create({ data: userData })).rejects.toThrow()
   })
 
   it('creates user without password (for OAuth)', async () => {
@@ -108,7 +106,7 @@ describe('Authentication Database Operations', () => {
   it('handles email verification', async () => {
     const user = await prisma.user.create({
       data: {
-        ...await createTestUser(),
+        ...(await createTestUser()),
         emailVerified: null,
       },
     })

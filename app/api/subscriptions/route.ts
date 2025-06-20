@@ -23,7 +23,10 @@ export async function GET() {
     return NextResponse.json(subscriptions)
   } catch (error) {
     console.error('GET subscriptions error:', error)
-    return NextResponse.json({ error: 'Failed to fetch subscriptions' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch subscriptions' },
+      { status: 500 }
+    )
   }
 }
 
@@ -51,6 +54,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.errors }, { status: 400 })
     }
     console.error('POST subscription error:', error)
-    return NextResponse.json({ error: 'Failed to create subscription' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to create subscription' },
+      { status: 500 }
+    )
   }
 }

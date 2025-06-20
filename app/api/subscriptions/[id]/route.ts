@@ -25,13 +25,19 @@ export async function GET(req: NextRequest, { params }: Props) {
     })
 
     if (!subscription) {
-      return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Subscription not found' },
+        { status: 404 }
+      )
     }
 
     return NextResponse.json(subscription)
   } catch (error) {
     console.error('GET subscription error:', error)
-    return NextResponse.json({ error: 'Failed to fetch subscription' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch subscription' },
+      { status: 500 }
+    )
   }
 }
 
@@ -53,7 +59,10 @@ export async function PUT(req: NextRequest, { params }: Props) {
     })
 
     if (!subscription) {
-      return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Subscription not found' },
+        { status: 404 }
+      )
     }
 
     const updated = await prisma.subscription.update({
@@ -72,7 +81,10 @@ export async function PUT(req: NextRequest, { params }: Props) {
       return NextResponse.json({ error: error.errors }, { status: 400 })
     }
     console.error('PUT subscription error:', error)
-    return NextResponse.json({ error: 'Failed to update subscription' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to update subscription' },
+      { status: 500 }
+    )
   }
 }
 
@@ -91,7 +103,10 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     })
 
     if (!subscription) {
-      return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Subscription not found' },
+        { status: 404 }
+      )
     }
 
     await prisma.subscription.delete({
@@ -103,6 +118,9 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('DELETE subscription error:', error)
-    return NextResponse.json({ error: 'Failed to delete subscription' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to delete subscription' },
+      { status: 500 }
+    )
   }
 }

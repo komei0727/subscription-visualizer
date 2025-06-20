@@ -4,23 +4,23 @@ import { prisma } from './test-db'
 // Mock auth helper that doesn't depend on Next.js context
 export async function mockAuth() {
   const mockGetServerSession = jest.fn()
-  
+
   // Mock the auth-helpers module
   jest.mock('@/lib/auth-helpers', () => ({
     auth: jest.fn(async () => {
       return mockGetServerSession()
     }),
   }))
-  
+
   // Mock next-auth
   jest.mock('next-auth', () => ({
     getServerSession: mockGetServerSession,
   }))
-  
+
   jest.mock('next-auth/next', () => ({
     getServerSession: mockGetServerSession,
   }))
-  
+
   return {
     mockGetServerSession,
     setSession: (session: any) => {
@@ -42,7 +42,7 @@ export function createMockRequest(
   } = {}
 ) {
   const { method = 'GET', body, headers = {} } = options
-  
+
   // Create a mock request object
   const mockRequest = {
     method,
@@ -56,7 +56,7 @@ export function createMockRequest(
     formData: async () => new FormData(),
     nextUrl: new URL(url),
   }
-  
+
   return mockRequest as unknown as NextRequest
 }
 

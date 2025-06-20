@@ -16,7 +16,9 @@ export function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-2 text-sm text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100"
       >
-        <span className="hidden sm:block">{session.user?.name || session.user?.email}</span>
+        <span className="hidden sm:block">
+          {session.user?.name || session.user?.email}
+        </span>
         <ChevronDown className="h-4 w-4" />
       </button>
 

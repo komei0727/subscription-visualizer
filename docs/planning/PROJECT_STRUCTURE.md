@@ -230,102 +230,104 @@ GOOGLE_CLIENT_SECRET=""
 ### 6. 基本的な設定ファイル
 
 #### tailwind.config.ts
+
 ```typescript
-import type { Config } from "tailwindcss"
+import type { Config } from 'tailwindcss'
 
 const config = {
-  darkMode: ["class"],
+  darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
-  prefix: "",
+  prefix: '',
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: '2rem',
       screens: {
-        "2xl": "1400px",
+        '2xl': '1400px',
       },
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config
 
 export default config
 ```
 
 #### middleware.ts
+
 ```typescript
-export { default } from "next-auth/middleware"
+export { default } from 'next-auth/middleware'
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/subscriptions/:path*",
-    "/analytics/:path*",
-    "/settings/:path*",
-    "/api/subscriptions/:path*",
-    "/api/analytics/:path*",
-  ]
+    '/dashboard/:path*',
+    '/subscriptions/:path*',
+    '/analytics/:path*',
+    '/settings/:path*',
+    '/api/subscriptions/:path*',
+    '/api/analytics/:path*',
+  ],
 }
 ```
 
@@ -342,6 +344,7 @@ pnpm prisma studio
 ## VSCode 推奨設定
 
 `.vscode/settings.json`:
+
 ```json
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -355,6 +358,7 @@ pnpm prisma studio
 ```
 
 `.vscode/extensions.json`:
+
 ```json
 {
   "recommendations": [
@@ -369,6 +373,7 @@ pnpm prisma studio
 ## Git設定
 
 `.gitignore`:
+
 ```
 # dependencies
 /node_modules
@@ -413,16 +418,19 @@ prisma/*.db-journal
 ## 開発フロー
 
 1. **機能開発時**
+
    - `feature/機能名` ブランチを作成
    - コンポーネントは `components/` に配置
    - APIエンドポイントは `app/api/` に配置
 
 2. **スタイリング**
+
    - Tailwind CSSクラスを使用
    - 共通スタイルは `globals.css` に定義
    - shadcn/ui コンポーネントをベースに拡張
 
 3. **型安全性**
+
    - Zodスキーマで入力検証
    - Prismaの型を活用
    - `types/` に共通型定義

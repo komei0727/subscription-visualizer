@@ -1,12 +1,12 @@
-import { 
-  Subscription as PrismaSubscription, 
-  BillingCycle, 
+import {
+  Subscription as PrismaSubscription,
+  BillingCycle,
   Category,
   Payment as PrismaPayment,
   Reminder as PrismaReminder,
   UserCategory as PrismaUserCategory,
   NotificationPreference as PrismaNotificationPreference,
-  PaymentStatus
+  PaymentStatus,
 } from '@prisma/client'
 
 export type Subscription = PrismaSubscription

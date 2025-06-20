@@ -9,7 +9,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">設定</h1>
-      
+
       <div className="space-y-6">
         <ProfileSettings user={session?.user} />
         <NotificationSettings />

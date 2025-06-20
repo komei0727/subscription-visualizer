@@ -14,7 +14,11 @@ export const registerSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
       'パスワードは大文字・小文字・数字を含む必要があります'
     ),
-  name: z.string().min(1, '名前を入力してください').max(50, '名前は50文字以内で入力してください').optional(),
+  name: z
+    .string()
+    .min(1, '名前を入力してください')
+    .max(50, '名前は50文字以内で入力してください')
+    .optional(),
 })
 
 export type LoginFormData = z.infer<typeof loginSchema>

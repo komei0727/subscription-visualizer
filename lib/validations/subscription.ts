@@ -2,7 +2,10 @@ import { z } from 'zod'
 import { BillingCycle, Category } from '@prisma/client'
 
 export const subscriptionSchema = z.object({
-  name: z.string().min(1, '名前は必須です').max(100, '名前は100文字以内で入力してください'),
+  name: z
+    .string()
+    .min(1, '名前は必須です')
+    .max(100, '名前は100文字以内で入力してください'),
   amount: z.number().positive('金額は正の数値を入力してください'),
   currency: z.string().default('JPY'),
   billingCycle: z.nativeEnum(BillingCycle),
@@ -16,4 +19,6 @@ export const updateSubscriptionSchema = subscriptionSchema.partial().extend({
 })
 
 export type SubscriptionFormData = z.infer<typeof subscriptionSchema>
-export type UpdateSubscriptionFormData = z.infer<typeof updateSubscriptionSchema>
+export type UpdateSubscriptionFormData = z.infer<
+  typeof updateSubscriptionSchema
+>

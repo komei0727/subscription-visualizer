@@ -8,12 +8,10 @@ const createJestConfig = nextJest({
 const customJestConfig: Config = {
   displayName: 'integration',
   testEnvironment: 'node',
-  setupFilesAfterEnv: [
-    '<rootDir>/tests/integration/setup.ts'
-  ],
+  setupFilesAfterEnv: ['<rootDir>/tests/integration/setup.ts'],
   testMatch: [
     '<rootDir>/tests/integration/db/**/*.test.ts',
-    '<rootDir>/tests/integration/services/**/*.test.ts'
+    '<rootDir>/tests/integration/services/**/*.test.ts',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',

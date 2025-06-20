@@ -2,7 +2,11 @@ import { GET, POST } from '@/app/api/subscriptions/route'
 import { PUT as PUT_BY_ID } from '@/app/api/subscriptions/[id]/route'
 import { prisma } from '../utils/test-db'
 import { createTestUser } from '../utils/test-factories'
-import { mockSession, createTestRequest, parseResponse } from '../utils/test-request'
+import {
+  mockSession,
+  createTestRequest,
+  parseResponse,
+} from '../utils/test-request'
 import { BillingCycle, Category } from '@prisma/client'
 
 describe('API Error Handling Integration Tests', () => {
@@ -20,16 +24,21 @@ describe('API Error Handling Integration Tests', () => {
     it('handles database connection failure gracefully', async () => {
       // Mock prisma to throw connection error
       const originalFindMany = prisma.subscription.findMany
-      prisma.subscription.findMany = jest.fn().mockRejectedValue(
-        new Error('Connection to database failed')
-      )
+      prisma.subscription.findMany = jest
+        .fn()
+        .mockRejectedValue(new Error('Connection to database failed'))
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions')
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions'
+      )
       const response = await GET(request)
       const result = await parseResponse(response)
 
       expect(result.status).toBe(500)
-      expect(result.data).toHaveProperty('error', 'Failed to fetch subscriptions')
+      expect(result.data).toHaveProperty(
+        'error',
+        'Failed to fetch subscriptions'
+      )
 
       // Restore original function
       prisma.subscription.findMany = originalFindMany
@@ -38,26 +47,32 @@ describe('API Error Handling Integration Tests', () => {
     it('handles database timeout', async () => {
       // Mock prisma to throw timeout error
       const originalCreate = prisma.subscription.create
-      prisma.subscription.create = jest.fn().mockRejectedValue(
-        new Error('Query timeout')
-      )
+      prisma.subscription.create = jest
+        .fn()
+        .mockRejectedValue(new Error('Query timeout'))
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          name: 'Test Service',
-          amount: 1000,
-          currency: 'JPY',
-          billingCycle: BillingCycle.MONTHLY,
-          category: Category.OTHER,
-          nextBillingDate: new Date().toISOString(),
-        },
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            name: 'Test Service',
+            amount: 1000,
+            currency: 'JPY',
+            billingCycle: BillingCycle.MONTHLY,
+            category: Category.OTHER,
+            nextBillingDate: new Date().toISOString(),
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
       expect(result.status).toBe(500)
-      expect(result.data).toHaveProperty('error', 'Failed to create subscription')
+      expect(result.data).toHaveProperty(
+        'error',
+        'Failed to create subscription'
+      )
 
       // Restore original function
       prisma.subscription.create = originalCreate
@@ -128,10 +143,13 @@ describe('API Error Handling Integration Tests', () => {
       ]
 
       for (const testCase of testCases) {
-        const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-          method: 'POST',
-          body: testCase.data,
-        })
+        const request = createTestRequest(
+          'http://localhost:3000/api/subscriptions',
+          {
+            method: 'POST',
+            body: testCase.data,
+          }
+        )
         const response = await POST(request)
         const result = await parseResponse(response)
 
@@ -142,19 +160,22 @@ describe('API Error Handling Integration Tests', () => {
 
     it('validates string length limits', async () => {
       const longString = 'a'.repeat(1000)
-      
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          name: longString, // Exceeds 100 character limit
-          amount: 1000,
-          currency: 'JPY',
-          billingCycle: BillingCycle.MONTHLY,
-          category: Category.OTHER,
-          nextBillingDate: new Date().toISOString(),
-          notes: longString, // Exceeds 500 character limit
-        },
-      })
+
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            name: longString, // Exceeds 100 character limit
+            amount: 1000,
+            currency: 'JPY',
+            billingCycle: BillingCycle.MONTHLY,
+            category: Category.OTHER,
+            nextBillingDate: new Date().toISOString(),
+            notes: longString, // Exceeds 500 character limit
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -176,11 +197,13 @@ describe('API Error Handling Integration Tests', () => {
       }))
 
       // Send all requests concurrently
-      const promises = requests.map(data =>
+      const promises = requests.map((data) =>
         createTestRequest('http://localhost:3000/api/subscriptions', {
           method: 'POST',
           body: data,
-        }).then(req => POST(req)).then(res => parseResponse(res))
+        })
+          .then((req) => POST(req))
+          .then((res) => parseResponse(res))
       )
 
       const results = await Promise.all(promises)
@@ -211,12 +234,14 @@ describe('API Error Handling Integration Tests', () => {
       }
 
       // Send the same request multiple times
-      const requests = Array(3).fill(null).map(() =>
-        createTestRequest('http://localhost:3000/api/subscriptions', {
-          method: 'POST',
-          body: subscriptionData,
-        })
-      )
+      const requests = Array(3)
+        .fill(null)
+        .map(() =>
+          createTestRequest('http://localhost:3000/api/subscriptions', {
+            method: 'POST',
+            body: subscriptionData,
+          })
+        )
 
       // Execute requests
       const responses = []
@@ -227,13 +252,13 @@ describe('API Error Handling Integration Tests', () => {
       }
 
       // All should succeed (no idempotency key implemented)
-      responses.forEach(result => {
+      responses.forEach((result) => {
         expect(result.status).toBe(201)
       })
 
       // Should have created 3 subscriptions
       const subscriptions = await prisma.subscription.findMany({
-        where: { 
+        where: {
           userId: testUserId,
           name: 'Idempotent Service',
         },
@@ -245,10 +270,13 @@ describe('API Error Handling Integration Tests', () => {
 
   describe('Edge Cases', () => {
     it('handles empty request body', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {},
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {},
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -257,20 +285,23 @@ describe('API Error Handling Integration Tests', () => {
     })
 
     it('handles null values in optional fields', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          name: 'Null Fields Service',
-          amount: 1500,
-          currency: 'JPY',
-          billingCycle: BillingCycle.MONTHLY,
-          category: Category.OTHER,
-          nextBillingDate: new Date().toISOString(),
-          notes: null,
-          description: null,
-          url: null,
-        },
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            name: 'Null Fields Service',
+            amount: 1500,
+            currency: 'JPY',
+            billingCycle: BillingCycle.MONTHLY,
+            category: Category.OTHER,
+            nextBillingDate: new Date().toISOString(),
+            notes: null,
+            description: null,
+            url: null,
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -279,17 +310,20 @@ describe('API Error Handling Integration Tests', () => {
     })
 
     it('handles very large numbers', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          name: 'Expensive Service',
-          amount: 999999999999, // Very large amount
-          currency: 'JPY',
-          billingCycle: BillingCycle.YEARLY,
-          category: Category.FINANCE,
-          nextBillingDate: new Date().toISOString(),
-        },
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            name: 'Expensive Service',
+            amount: 999999999999, // Very large amount
+            currency: 'JPY',
+            billingCycle: BillingCycle.YEARLY,
+            category: Category.FINANCE,
+            nextBillingDate: new Date().toISOString(),
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -299,19 +333,22 @@ describe('API Error Handling Integration Tests', () => {
 
     it('handles special characters in text fields', async () => {
       const specialChars = '特殊文字!@#$%^&*()_+-=[]{}|;:"<>?,./~`'
-      
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          name: specialChars,
-          amount: 3000,
-          currency: 'JPY',
-          billingCycle: BillingCycle.MONTHLY,
-          category: Category.OTHER,
-          nextBillingDate: new Date().toISOString(),
-          notes: `Notes with ${specialChars}`,
-        },
-      })
+
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            name: specialChars,
+            amount: 3000,
+            currency: 'JPY',
+            billingCycle: BillingCycle.MONTHLY,
+            category: Category.OTHER,
+            nextBillingDate: new Date().toISOString(),
+            notes: `Notes with ${specialChars}`,
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -344,11 +381,16 @@ describe('API Error Handling Integration Tests', () => {
         // Other fields should remain unchanged
       }
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-        method: 'PUT',
-        body: partialUpdate,
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`,
+        {
+          method: 'PUT',
+          body: partialUpdate,
+        }
+      )
+      const response = await PUT_BY_ID(request, {
+        params: { id: subscription.id },
       })
-      const response = await PUT_BY_ID(request, { params: { id: subscription.id } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(200)
@@ -375,14 +417,19 @@ describe('API Error Handling Integration Tests', () => {
       })
 
       // Try to update billing info on cancelled subscription
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-        method: 'PUT',
-        body: {
-          amount: 3000,
-          billingCycle: BillingCycle.YEARLY,
-        },
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`,
+        {
+          method: 'PUT',
+          body: {
+            amount: 3000,
+            billingCycle: BillingCycle.YEARLY,
+          },
+        }
+      )
+      const response = await PUT_BY_ID(request, {
+        params: { id: subscription.id },
       })
-      const response = await PUT_BY_ID(request, { params: { id: subscription.id } })
       const result = await parseResponse(response)
 
       // Should still allow updates (business logic decision)

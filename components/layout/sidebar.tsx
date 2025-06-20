@@ -3,12 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import {
-  LayoutDashboard,
-  CreditCard,
-  BarChart3,
-  Settings,
-} from 'lucide-react'
+import { LayoutDashboard, CreditCard, BarChart3, Settings } from 'lucide-react'
 
 const navigation = [
   { name: 'ダッシュボード', href: '/dashboard', icon: LayoutDashboard },
@@ -24,7 +19,8 @@ export function Sidebar() {
     <aside className="hidden lg:block w-64 bg-white shadow-sm">
       <nav className="p-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+          const isActive =
+            pathname === item.href || pathname.startsWith(item.href + '/')
           return (
             <Link
               key={item.name}

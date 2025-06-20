@@ -77,7 +77,7 @@ export function getDaysUntilBilling(nextBillingDate: Date | string): number {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   next.setHours(0, 0, 0, 0)
-  
+
   const diffTime = next.getTime() - today.getTime()
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 }
@@ -85,7 +85,9 @@ export function getDaysUntilBilling(nextBillingDate: Date | string): number {
 /**
  * サブスクリプションの緊急度を判定
  */
-export function getUrgencyLevel(daysUntilBilling: number): 'high' | 'medium' | 'low' {
+export function getUrgencyLevel(
+  daysUntilBilling: number
+): 'high' | 'medium' | 'low' {
   if (daysUntilBilling <= 3) return 'high'
   if (daysUntilBilling <= 7) return 'medium'
   return 'low'
@@ -111,14 +113,21 @@ export function formatAmount(amount: number, currency: string = 'JPY'): string {
   const symbol = getCurrencySymbol(currency)
   const isNegative = amount < 0
   const absoluteAmount = Math.abs(amount)
-  
+
   if (currency === 'JPY') {
     const formattedAmount = Math.round(absoluteAmount).toLocaleString()
-    return isNegative ? `-${symbol}${formattedAmount}` : `${symbol}${formattedAmount}`
+    return isNegative
+      ? `-${symbol}${formattedAmount}`
+      : `${symbol}${formattedAmount}`
   }
-  
-  const formattedAmount = absoluteAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  return isNegative ? `-${symbol}${formattedAmount}` : `${symbol}${formattedAmount}`
+
+  const formattedAmount = absoluteAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  return isNegative
+    ? `-${symbol}${formattedAmount}`
+    : `${symbol}${formattedAmount}`
 }
 
 /**
@@ -128,8 +137,10 @@ export function calculateTotalAmount(
   subscriptions: Pick<Subscription, 'amount' | 'billingCycle' | 'isActive'>[],
   activeOnly: boolean = true
 ): number {
-  const filtered = activeOnly ? subscriptions.filter(s => s.isActive) : subscriptions
-  
+  const filtered = activeOnly
+    ? subscriptions.filter((s) => s.isActive)
+    : subscriptions
+
   return filtered.reduce((total, sub) => {
     return total + calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
   }, 0)
@@ -139,30 +150,41 @@ export function calculateTotalAmount(
  * サブスクリプションリストから統計情報を計算
  */
 export function calculateSubscriptionStats(subscriptions: Subscription[]) {
-  const activeSubscriptions = subscriptions.filter(s => s.isActive)
-  
+  const activeSubscriptions = subscriptions.filter((s) => s.isActive)
+
   const monthlyTotal = activeSubscriptions.reduce((total, sub) => {
     return total + calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
   }, 0)
-  
+
   const yearlyTotal = monthlyTotal * 12
-  
-  const categoryBreakdown = activeSubscriptions.reduce((acc, sub) => {
-    const monthlyAmount = calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
-    if (!acc[sub.category]) {
-      acc[sub.category] = 0
-    }
-    acc[sub.category] += monthlyAmount
-    return acc
-  }, {} as Record<string, number>)
-  
-  const upcomingPayments = activeSubscriptions.filter(sub => {
-    const days = getDaysUntilBilling(sub.nextBillingDate)
-    return days >= 0 && days <= 30
-  }).sort((a, b) => {
-    return getDaysUntilBilling(a.nextBillingDate) - getDaysUntilBilling(b.nextBillingDate)
-  })
-  
+
+  const categoryBreakdown = activeSubscriptions.reduce(
+    (acc, sub) => {
+      const monthlyAmount = calculateMonthlyAmount(
+        Number(sub.amount),
+        sub.billingCycle
+      )
+      if (!acc[sub.category]) {
+        acc[sub.category] = 0
+      }
+      acc[sub.category] += monthlyAmount
+      return acc
+    },
+    {} as Record<string, number>
+  )
+
+  const upcomingPayments = activeSubscriptions
+    .filter((sub) => {
+      const days = getDaysUntilBilling(sub.nextBillingDate)
+      return days >= 0 && days <= 30
+    })
+    .sort((a, b) => {
+      return (
+        getDaysUntilBilling(a.nextBillingDate) -
+        getDaysUntilBilling(b.nextBillingDate)
+      )
+    })
+
   return {
     activeCount: activeSubscriptions.length,
     totalCount: subscriptions.length,

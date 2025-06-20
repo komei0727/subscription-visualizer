@@ -11,19 +11,20 @@ export default function SimpleHomePage() {
           <p className="text-xl text-gray-600 mb-8">
             あなたのサブスクリプションを一元管理
           </p>
-          
+
           <div className="space-y-4">
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-2xl font-semibold mb-4">動作確認</h2>
               <p className="text-gray-600 mb-4">
                 データベースとシードデータが正常にセットアップされました！
               </p>
-              
+
               <div className="bg-green-50 border border-green-200 rounded p-4 mb-4">
                 <p className="text-green-800">
-                  ✅ PostgreSQLデータベース: 接続成功<br />
-                  ✅ マイグレーション: 完了<br />
-                  ✅ シードデータ: 8件のサンプルデータを投入
+                  ✅ PostgreSQLデータベース: 接続成功
+                  <br />
+                  ✅ マイグレーション: 完了
+                  <br />✅ シードデータ: 8件のサンプルデータを投入
                 </p>
               </div>
 
@@ -46,7 +47,8 @@ export default function SimpleHomePage() {
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold mb-2">デモアカウント</h3>
               <p className="text-gray-600">
-                メール: demo@example.com<br />
+                メール: demo@example.com
+                <br />
                 パスワード: demo1234
               </p>
             </div>

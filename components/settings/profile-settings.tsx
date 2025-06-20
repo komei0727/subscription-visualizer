@@ -40,7 +40,10 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
       <h2 className="text-lg font-semibold mb-4">プロフィール設定</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             メールアドレス
           </label>
           <input
@@ -51,9 +54,12 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
             className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm"
           />
         </div>
-        
+
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-700"
+          >
             名前
           </label>
           <input

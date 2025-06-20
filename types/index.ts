@@ -20,7 +20,7 @@ export interface Subscription {
   updatedAt: Date
 }
 
-export type Category = 
+export type Category =
   | 'ENTERTAINMENT'
   | 'PRODUCTIVITY'
   | 'EDUCATION'

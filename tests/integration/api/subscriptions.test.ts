@@ -1,8 +1,20 @@
 import { GET, POST, PUT, DELETE } from '@/app/api/subscriptions/route'
-import { GET as GET_BY_ID, PUT as PUT_BY_ID, DELETE as DELETE_BY_ID } from '@/app/api/subscriptions/[id]/route'
+import {
+  GET as GET_BY_ID,
+  PUT as PUT_BY_ID,
+  DELETE as DELETE_BY_ID,
+} from '@/app/api/subscriptions/[id]/route'
 import { prisma } from '../utils/test-db'
-import { createTestUser, createTestSubscription, createMultipleTestSubscriptions } from '../utils/test-factories'
-import { mockSession, createTestRequest, parseResponse } from '../utils/test-request'
+import {
+  createTestUser,
+  createTestSubscription,
+  createMultipleTestSubscriptions,
+} from '../utils/test-factories'
+import {
+  mockSession,
+  createTestRequest,
+  parseResponse,
+} from '../utils/test-request'
 import { BillingCycle, Category } from '@prisma/client'
 
 describe('Subscriptions API Integration Tests', () => {
@@ -21,7 +33,9 @@ describe('Subscriptions API Integration Tests', () => {
 
   describe('GET /api/subscriptions', () => {
     it('returns empty array when user has no subscriptions', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions')
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions'
+      )
       const response = await GET(request)
       const result = await parseResponse(response)
 
@@ -34,7 +48,9 @@ describe('Subscriptions API Integration Tests', () => {
       const subscriptionsData = createMultipleTestSubscriptions(testUserId, 5)
       await prisma.subscription.createMany({ data: subscriptionsData })
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions')
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions'
+      )
       const response = await GET(request)
       const result = await parseResponse(response)
 
@@ -47,9 +63,13 @@ describe('Subscriptions API Integration Tests', () => {
 
     it('returns 401 when not authenticated', async () => {
       // Clear session mock
-      jest.spyOn(require('next-auth'), 'getServerSession').mockResolvedValueOnce(null)
+      jest
+        .spyOn(require('next-auth'), 'getServerSession')
+        .mockResolvedValueOnce(null)
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions')
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions'
+      )
       const response = await GET(request)
       const result = await parseResponse(response)
 
@@ -61,7 +81,7 @@ describe('Subscriptions API Integration Tests', () => {
       // Create another user with subscriptions
       const otherUserData = await createTestUser({ email: 'other@example.com' })
       const otherUser = await prisma.user.create({ data: otherUserData })
-      
+
       // Create subscriptions for both users
       await prisma.subscription.createMany({
         data: [
@@ -70,7 +90,9 @@ describe('Subscriptions API Integration Tests', () => {
         ],
       })
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions')
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions'
+      )
       const response = await GET(request)
       const result = await parseResponse(response)
 
@@ -94,10 +116,13 @@ describe('Subscriptions API Integration Tests', () => {
         notes: 'Premium plan',
       }
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: subscriptionData,
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: subscriptionData,
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -121,10 +146,13 @@ describe('Subscriptions API Integration Tests', () => {
         amount: 1000,
       }
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: invalidData,
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: invalidData,
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -142,10 +170,13 @@ describe('Subscriptions API Integration Tests', () => {
         nextBillingDate: new Date().toISOString(),
       }
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: invalidData,
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: invalidData,
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -154,12 +185,17 @@ describe('Subscriptions API Integration Tests', () => {
     })
 
     it('returns 401 when not authenticated', async () => {
-      jest.spyOn(require('next-auth'), 'getServerSession').mockResolvedValueOnce(null)
+      jest
+        .spyOn(require('next-auth'), 'getServerSession')
+        .mockResolvedValueOnce(null)
 
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: { name: 'Test' },
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: { name: 'Test' },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
 
@@ -171,10 +207,16 @@ describe('Subscriptions API Integration Tests', () => {
   describe('GET /api/subscriptions/[id]', () => {
     it('returns subscription by id', async () => {
       const subscriptionData = createTestSubscription(testUserId)
-      const subscription = await prisma.subscription.create({ data: subscriptionData })
+      const subscription = await prisma.subscription.create({
+        data: subscriptionData,
+      })
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`)
-      const response = await GET_BY_ID(request, { params: { id: subscription.id } })
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`
+      )
+      const response = await GET_BY_ID(request, {
+        params: { id: subscription.id },
+      })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(200)
@@ -183,8 +225,12 @@ describe('Subscriptions API Integration Tests', () => {
     })
 
     it('returns 404 for non-existent subscription', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions/non-existent-id')
-      const response = await GET_BY_ID(request, { params: { id: 'non-existent-id' } })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions/non-existent-id'
+      )
+      const response = await GET_BY_ID(request, {
+        params: { id: 'non-existent-id' },
+      })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(404)
@@ -199,8 +245,12 @@ describe('Subscriptions API Integration Tests', () => {
         data: createTestSubscription(otherUser.id),
       })
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${otherSubscription.id}`)
-      const response = await GET_BY_ID(request, { params: { id: otherSubscription.id } })
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${otherSubscription.id}`
+      )
+      const response = await GET_BY_ID(request, {
+        params: { id: otherSubscription.id },
+      })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(404)
@@ -211,7 +261,10 @@ describe('Subscriptions API Integration Tests', () => {
   describe('PUT /api/subscriptions/[id]', () => {
     it('updates subscription successfully', async () => {
       const subscription = await prisma.subscription.create({
-        data: createTestSubscription(testUserId, { name: 'Old Name', amount: 1000 }),
+        data: createTestSubscription(testUserId, {
+          name: 'Old Name',
+          amount: 1000,
+        }),
       })
 
       const updateData = {
@@ -219,11 +272,16 @@ describe('Subscriptions API Integration Tests', () => {
         amount: 2000,
       }
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-        method: 'PUT',
-        body: updateData,
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`,
+        {
+          method: 'PUT',
+          body: updateData,
+        }
+      )
+      const response = await PUT_BY_ID(request, {
+        params: { id: subscription.id },
       })
-      const response = await PUT_BY_ID(request, { params: { id: subscription.id } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(200)
@@ -247,11 +305,16 @@ describe('Subscriptions API Integration Tests', () => {
         amount: -100, // Invalid negative amount
       }
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-        method: 'PUT',
-        body: invalidUpdate,
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`,
+        {
+          method: 'PUT',
+          body: invalidUpdate,
+        }
+      )
+      const response = await PUT_BY_ID(request, {
+        params: { id: subscription.id },
       })
-      const response = await PUT_BY_ID(request, { params: { id: subscription.id } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(400)
@@ -259,11 +322,16 @@ describe('Subscriptions API Integration Tests', () => {
     })
 
     it('returns 404 when updating non-existent subscription', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions/non-existent-id', {
-        method: 'PUT',
-        body: { name: 'Updated' },
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions/non-existent-id',
+        {
+          method: 'PUT',
+          body: { name: 'Updated' },
+        }
+      )
+      const response = await PUT_BY_ID(request, {
+        params: { id: 'non-existent-id' },
       })
-      const response = await PUT_BY_ID(request, { params: { id: 'non-existent-id' } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(404)
@@ -277,14 +345,22 @@ describe('Subscriptions API Integration Tests', () => {
         data: createTestSubscription(testUserId),
       })
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-        method: 'DELETE',
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${subscription.id}`,
+        {
+          method: 'DELETE',
+        }
+      )
+      const response = await DELETE_BY_ID(request, {
+        params: { id: subscription.id },
       })
-      const response = await DELETE_BY_ID(request, { params: { id: subscription.id } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(200)
-      expect(result.data).toHaveProperty('message', 'Subscription deleted successfully')
+      expect(result.data).toHaveProperty(
+        'message',
+        'Subscription deleted successfully'
+      )
 
       // Verify deletion in database
       const deleted = await prisma.subscription.findUnique({
@@ -294,10 +370,15 @@ describe('Subscriptions API Integration Tests', () => {
     })
 
     it('returns 404 when deleting non-existent subscription', async () => {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions/non-existent-id', {
-        method: 'DELETE',
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions/non-existent-id',
+        {
+          method: 'DELETE',
+        }
+      )
+      const response = await DELETE_BY_ID(request, {
+        params: { id: 'non-existent-id' },
       })
-      const response = await DELETE_BY_ID(request, { params: { id: 'non-existent-id' } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(404)
@@ -312,10 +393,15 @@ describe('Subscriptions API Integration Tests', () => {
         data: createTestSubscription(otherUser.id),
       })
 
-      const request = createTestRequest(`http://localhost:3000/api/subscriptions/${otherSubscription.id}`, {
-        method: 'DELETE',
+      const request = createTestRequest(
+        `http://localhost:3000/api/subscriptions/${otherSubscription.id}`,
+        {
+          method: 'DELETE',
+        }
+      )
+      const response = await DELETE_BY_ID(request, {
+        params: { id: otherSubscription.id },
       })
-      const response = await DELETE_BY_ID(request, { params: { id: otherSubscription.id } })
       const result = await parseResponse(response)
 
       expect(result.status).toBe(404)

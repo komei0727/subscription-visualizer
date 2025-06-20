@@ -22,15 +22,21 @@ describe('LoginForm', () => {
     expect(screen.getByLabelText(/パスワード/i)).toBeInTheDocument()
     // Use more specific selector since there might be multiple buttons
     expect(screen.getByRole('button', { name: 'ログイン' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Googleでログイン/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /Googleでログイン/i })
+    ).toBeInTheDocument()
   })
 
   it('displays empty form fields', () => {
     render(<LoginForm />)
 
-    const emailInput = screen.getByLabelText(/メールアドレス/i) as HTMLInputElement
-    const passwordInput = screen.getByLabelText(/パスワード/i) as HTMLInputElement
-    
+    const emailInput = screen.getByLabelText(
+      /メールアドレス/i
+    ) as HTMLInputElement
+    const passwordInput = screen.getByLabelText(
+      /パスワード/i
+    ) as HTMLInputElement
+
     expect(emailInput.value).toBe('')
     expect(passwordInput.value).toBe('')
   })
@@ -57,15 +63,21 @@ describe('LoginForm', () => {
         redirect: false,
       })
     })
-    
-    await waitFor(() => {
-      expect(global.mockRouterPush).toHaveBeenCalledWith('/dashboard')
-    }, { timeout: 3000 })
+
+    await waitFor(
+      () => {
+        expect(global.mockRouterPush).toHaveBeenCalledWith('/dashboard')
+      },
+      { timeout: 3000 }
+    )
   })
 
   it('displays error message on failed login', async () => {
     const user = userEvent.setup()
-    mockSignIn.mockResolvedValueOnce({ ok: false, error: 'Invalid credentials' } as any)
+    mockSignIn.mockResolvedValueOnce({
+      ok: false,
+      error: 'Invalid credentials',
+    } as any)
 
     render(<LoginForm />)
 
@@ -78,13 +90,17 @@ describe('LoginForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText(/メールアドレスまたはパスワードが正しくありません/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/メールアドレスまたはパスワードが正しくありません/i)
+      ).toBeInTheDocument()
     })
   })
 
   it('disables form during submission', async () => {
     const user = userEvent.setup()
-    mockSignIn.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)))
+    mockSignIn.mockImplementation(
+      () => new Promise((resolve) => setTimeout(resolve, 100))
+    )
 
     render(<LoginForm />)
 
@@ -105,10 +121,14 @@ describe('LoginForm', () => {
 
     render(<LoginForm />)
 
-    const googleButton = screen.getByRole('button', { name: /Googleでログイン/i })
+    const googleButton = screen.getByRole('button', {
+      name: /Googleでログイン/i,
+    })
     await user.click(googleButton)
 
-    expect(mockSignIn).toHaveBeenCalledWith('google', { callbackUrl: '/dashboard' })
+    expect(mockSignIn).toHaveBeenCalledWith('google', {
+      callbackUrl: '/dashboard',
+    })
   })
 
   it('validates required fields', async () => {

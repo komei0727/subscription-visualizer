@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default async function Home() {
   const session = await auth()
-  
+
   // 認証済みユーザーはダッシュボードにリダイレクト
   if (session) {
     redirect('/dashboard')

@@ -70,7 +70,7 @@ describe('Subscription Service Integration Tests', () => {
       // Calculate monthly amount
       const monthlyTotal = activeSubscriptions.reduce((total, sub) => {
         let monthlyAmount = Number(sub.amount)
-        
+
         switch (sub.billingCycle) {
           case BillingCycle.YEARLY:
             monthlyAmount = monthlyAmount / 12
@@ -88,7 +88,7 @@ describe('Subscription Service Integration Tests', () => {
             monthlyAmount = monthlyAmount * 30
             break
         }
-        
+
         return total + monthlyAmount
       }, 0)
 
@@ -112,7 +112,10 @@ describe('Subscription Service Integration Tests', () => {
       })
 
       const categoryMap = new Map(
-        result.map(r => [r.category, { count: r._count.category, total: r._sum.amount }])
+        result.map((r) => [
+          r.category,
+          { count: r._count.category, total: r._sum.amount },
+        ])
       )
 
       expect(categoryMap.get(Category.VIDEO)?.count).toBe(1)
@@ -120,7 +123,9 @@ describe('Subscription Service Integration Tests', () => {
       expect(categoryMap.get(Category.MUSIC)?.count).toBe(1)
       expect(categoryMap.get(Category.MUSIC)?.total?.toString()).toBe('980')
       expect(categoryMap.get(Category.SOFTWARE)?.count).toBe(1)
-      expect(categoryMap.get(Category.SOFTWARE)?.total?.toString()).toBe('72336')
+      expect(categoryMap.get(Category.SOFTWARE)?.total?.toString()).toBe(
+        '72336'
+      )
     })
   })
 
@@ -312,7 +317,7 @@ describe('Subscription Service Integration Tests', () => {
 
       // Create multiple payments
       await Promise.all(
-        Array.from({ length: 6 }, (_, i) => 
+        Array.from({ length: 6 }, (_, i) =>
           prisma.payment.create({
             data: {
               subscriptionId: subscription.id,

@@ -10,8 +10,12 @@ interface UpcomingPaymentsProps {
 
 export function UpcomingPayments({ subscriptions }: UpcomingPaymentsProps) {
   const upcoming = subscriptions
-    .filter(s => s.isActive)
-    .sort((a, b) => new Date(a.nextBillingDate).getTime() - new Date(b.nextBillingDate).getTime())
+    .filter((s) => s.isActive)
+    .sort(
+      (a, b) =>
+        new Date(a.nextBillingDate).getTime() -
+        new Date(b.nextBillingDate).getTime()
+    )
     .slice(0, 5)
 
   if (upcoming.length === 0) {
@@ -29,18 +33,23 @@ export function UpcomingPayments({ subscriptions }: UpcomingPaymentsProps) {
       <div className="space-y-4">
         {upcoming.map((subscription) => {
           const daysUntilBilling = Math.ceil(
-            (new Date(subscription.nextBillingDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+            (new Date(subscription.nextBillingDate).getTime() -
+              new Date().getTime()) /
+              (1000 * 60 * 60 * 24)
           )
-          
+
           return (
-            <div key={subscription.id} className="flex items-center justify-between py-3 border-b last:border-0">
+            <div
+              key={subscription.id}
+              className="flex items-center justify-between py-3 border-b last:border-0"
+            >
               <div>
                 <p className="font-medium text-gray-900">{subscription.name}</p>
                 <p className="text-sm text-gray-500">
-                  {format(new Date(subscription.nextBillingDate), 'M月d日(E)', { locale: ja })}
-                  <span className="ml-2 text-xs">
-                    ({daysUntilBilling}日後)
-                  </span>
+                  {format(new Date(subscription.nextBillingDate), 'M月d日(E)', {
+                    locale: ja,
+                  })}
+                  <span className="ml-2 text-xs">({daysUntilBilling}日後)</span>
                 </p>
               </div>
               <div className="text-right">

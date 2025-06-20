@@ -91,7 +91,10 @@ jest.mock('next/server', () => ({
     },
   },
   NextRequest: class {
-    constructor(public url: string, init?: RequestInit) {
+    constructor(
+      public url: string,
+      init?: RequestInit
+    ) {
       Object.assign(this, init)
     }
     json() {

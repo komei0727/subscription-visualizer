@@ -59,7 +59,10 @@ describe('Subscription Database Operations', () => {
       })
 
       expect(userSubscriptions).toHaveLength(2)
-      expect(userSubscriptions.map(s => s.name).sort()).toEqual(['Service 1', 'Service 2'])
+      expect(userSubscriptions.map((s) => s.name).sort()).toEqual([
+        'Service 1',
+        'Service 2',
+      ])
     })
 
     it('updates a subscription', async () => {
@@ -202,7 +205,7 @@ describe('Subscription Database Operations', () => {
       })
 
       expect(activeSubscriptions).toHaveLength(2)
-      expect(activeSubscriptions.every(s => s.isActive)).toBe(true)
+      expect(activeSubscriptions.every((s) => s.isActive)).toBe(true)
     })
 
     it('filters by billing cycle', async () => {
@@ -214,7 +217,11 @@ describe('Subscription Database Operations', () => {
       })
 
       expect(monthlySubscriptions).toHaveLength(2)
-      expect(monthlySubscriptions.every(s => s.billingCycle === BillingCycle.MONTHLY)).toBe(true)
+      expect(
+        monthlySubscriptions.every(
+          (s) => s.billingCycle === BillingCycle.MONTHLY
+        )
+      ).toBe(true)
     })
 
     it('calculates total amount for active subscriptions', async () => {

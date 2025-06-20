@@ -13,7 +13,10 @@ export async function createTestUser(overrides?: Partial<User>) {
   return defaultUser
 }
 
-export function createTestSubscription(userId: string, overrides?: Partial<Subscription>) {
+export function createTestSubscription(
+  userId: string,
+  overrides?: Partial<Subscription>
+) {
   const defaultSubscription = {
     userId,
     name: 'Test Subscription',
@@ -34,7 +37,7 @@ export function createTestSubscription(userId: string, overrides?: Partial<Subsc
 export function createMultipleTestSubscriptions(userId: string, count: number) {
   const categories = Object.values(Category)
   const billingCycles = Object.values(BillingCycle)
-  
+
   return Array.from({ length: count }, (_, index) => ({
     userId,
     name: `Subscription ${index + 1}`,

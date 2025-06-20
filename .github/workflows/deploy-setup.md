@@ -11,6 +11,7 @@
 Add these secrets to your GitHub repository (Settings → Secrets and variables → Actions):
 
 ### Vercel Secrets
+
 - `VERCEL_TOKEN`: Your Vercel personal access token
   - Get it from: https://vercel.com/account/tokens
 - `VERCEL_ORG_ID`: Your Vercel organization ID
@@ -23,22 +24,26 @@ Add these secrets to your GitHub repository (Settings → Secrets and variables 
 Set these in your Vercel project settings (Settings → Environment Variables):
 
 #### Production & Preview
+
 - `DATABASE_URL`: PostgreSQL connection string
 - `NEXTAUTH_SECRET`: Random secret (generate with `openssl rand -base64 32`)
 - `GOOGLE_CLIENT_ID`: From Google Cloud Console
 - `GOOGLE_CLIENT_SECRET`: From Google Cloud Console
 
 #### Production Only
+
 - `NEXTAUTH_URL`: Your production domain (e.g., https://yourdomain.com)
 
 ## How to Get Vercel IDs
 
 1. Install Vercel CLI locally:
+
    ```bash
    pnpm add -g vercel
    ```
 
 2. Link your project:
+
    ```bash
    vercel link
    ```
@@ -54,11 +59,13 @@ Set these in your Vercel project settings (Settings → Environment Variables):
 ## Workflow Features
 
 ### Preview Deployments
+
 - Automatically deploys PRs to preview URLs
 - Comments PR with deployment link
 - Isolated environment for testing
 
 ### Production Deployments
+
 - Deploys to production when pushing to `main`
 - Uses production environment variables
 - Automatic SSL and CDN
@@ -69,6 +76,7 @@ For production deployments, consider:
 
 1. **Option 1**: Run migrations in build step
    Add to `package.json`:
+
    ```json
    "vercel-build": "prisma generate && prisma migrate deploy && next build"
    ```

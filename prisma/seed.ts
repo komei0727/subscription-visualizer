@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   // デモユーザーの作成
   const hashedPassword = await hash('demo1234', 12)
-  
+
   const user = await prisma.user.upsert({
     where: { email: 'demo@example.com' },
     update: {},
@@ -177,7 +177,7 @@ async function main() {
       for (let i = 1; i <= 3; i++) {
         const paidAt = new Date(subscription.nextBillingDate)
         paidAt.setMonth(paidAt.getMonth() - i)
-        
+
         payments.push({
           subscriptionId: subscription.id,
           amount: subscription.amount,

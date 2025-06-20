@@ -19,19 +19,18 @@ export default async function TestSubscriptionsPage() {
   })
 
   const monthlyTotal = subscriptions
-    .filter(s => s.isActive)
+    .filter((s) => s.isActive)
     .reduce((total, sub) => {
-      return total + calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
+      return (
+        total + calculateMonthlyAmount(Number(sub.amount), sub.billingCycle)
+      )
     }, 0)
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <Link
-            href="/"
-            className="text-indigo-600 hover:text-indigo-500"
-          >
+          <Link href="/" className="text-indigo-600 hover:text-indigo-500">
             ← ホームに戻る
           </Link>
         </div>
@@ -53,11 +52,16 @@ export default async function TestSubscriptionsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subscriptions.map((subscription) => {
             const daysUntilBilling = Math.ceil(
-              (new Date(subscription.nextBillingDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+              (new Date(subscription.nextBillingDate).getTime() -
+                new Date().getTime()) /
+                (1000 * 60 * 60 * 24)
             )
 
             return (
-              <div key={subscription.id} className="bg-white rounded-lg shadow p-6">
+              <div
+                key={subscription.id}
+                className="bg-white rounded-lg shadow p-6"
+              >
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">
                     {subscription.name}
@@ -74,7 +78,10 @@ export default async function TestSubscriptionsPage() {
 
                 <div className="mb-4">
                   <p className="text-2xl font-bold text-gray-900">
-                    {formatAmount(Number(subscription.amount), subscription.currency)}
+                    {formatAmount(
+                      Number(subscription.amount),
+                      subscription.currency
+                    )}
                     <span className="text-sm font-normal text-gray-500">
                       /{BILLING_CYCLE_LABELS[subscription.billingCycle]}
                     </span>
@@ -84,19 +91,29 @@ export default async function TestSubscriptionsPage() {
                 <div className="space-y-2 text-sm">
                   <p>
                     <span className="text-gray-500">次回支払日:</span>{' '}
-                    {new Date(subscription.nextBillingDate).toLocaleDateString('ja-JP')}
-                    <span className={`ml-2 font-semibold ${
-                      daysUntilBilling <= 7 ? 'text-red-600' : 'text-green-600'
-                    }`}>
+                    {new Date(subscription.nextBillingDate).toLocaleDateString(
+                      'ja-JP'
+                    )}
+                    <span
+                      className={`ml-2 font-semibold ${
+                        daysUntilBilling <= 7
+                          ? 'text-red-600'
+                          : 'text-green-600'
+                      }`}
+                    >
                       ({daysUntilBilling}日後)
                     </span>
                   </p>
-                  
+
                   <p>
                     <span className="text-gray-500">ステータス:</span>{' '}
-                    <span className={`font-semibold ${
-                      subscription.isActive ? 'text-green-600' : 'text-gray-400'
-                    }`}>
+                    <span
+                      className={`font-semibold ${
+                        subscription.isActive
+                          ? 'text-green-600'
+                          : 'text-gray-400'
+                      }`}
+                    >
                       {subscription.isActive ? 'アクティブ' : '解約済み'}
                     </span>
                   </p>

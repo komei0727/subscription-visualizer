@@ -1,4 +1,8 @@
-import { setupTestDatabase, teardownTestDatabase, cleanupDatabase } from './utils/test-db'
+import {
+  setupTestDatabase,
+  teardownTestDatabase,
+  cleanupDatabase,
+} from './utils/test-db'
 
 // Setup test database before all tests
 beforeAll(async () => {
@@ -42,7 +46,7 @@ jest.mock('next/server', () => ({
       this.headers = new Headers(init?.headers)
       this.body = init?.body
     }
-    
+
     method: string
     headers: Headers
     body: any

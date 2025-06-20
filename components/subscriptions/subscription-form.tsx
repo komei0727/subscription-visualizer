@@ -5,8 +5,17 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { Subscription, BillingCycle, Category, CATEGORY_LABELS, BILLING_CYCLE_LABELS } from '@/types/subscription'
-import { SubscriptionFormData, subscriptionSchema } from '@/lib/validations/subscription'
+import {
+  Subscription,
+  BillingCycle,
+  Category,
+  CATEGORY_LABELS,
+  BILLING_CYCLE_LABELS,
+} from '@/types/subscription'
+import {
+  SubscriptionFormData,
+  subscriptionSchema,
+} from '@/lib/validations/subscription'
 
 interface SubscriptionFormProps {
   subscription?: Subscription
@@ -23,20 +32,22 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
     formState: { errors },
   } = useForm<SubscriptionFormData>({
     resolver: zodResolver(subscriptionSchema),
-    defaultValues: subscription ? {
-      name: subscription.name,
-      amount: Number(subscription.amount),
-      currency: subscription.currency,
-      billingCycle: subscription.billingCycle,
-      nextBillingDate: new Date(subscription.nextBillingDate),
-      category: subscription.category,
-      notes: subscription.notes || undefined,
-    } : {
-      currency: 'JPY',
-      billingCycle: BillingCycle.MONTHLY,
-      category: Category.ENTERTAINMENT,
-      nextBillingDate: new Date(),
-    },
+    defaultValues: subscription
+      ? {
+          name: subscription.name,
+          amount: Number(subscription.amount),
+          currency: subscription.currency,
+          billingCycle: subscription.billingCycle,
+          nextBillingDate: new Date(subscription.nextBillingDate),
+          category: subscription.category,
+          notes: subscription.notes || undefined,
+        }
+      : {
+          currency: 'JPY',
+          billingCycle: BillingCycle.MONTHLY,
+          category: Category.ENTERTAINMENT,
+          nextBillingDate: new Date(),
+        },
   })
 
   const onSubmit = async (data: SubscriptionFormData) => {
@@ -44,10 +55,10 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
     setError(null)
 
     try {
-      const url = subscription 
+      const url = subscription
         ? `/api/subscriptions/${subscription.id}`
         : '/api/subscriptions'
-      
+
       const method = subscription ? 'PUT' : 'POST'
 
       // Ensure nextBillingDate is in ISO string format
@@ -74,7 +85,9 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
       router.refresh()
     } catch (error) {
       console.error('Submit error:', error)
-      setError(error instanceof Error ? error.message : '保存中にエラーが発生しました')
+      setError(
+        error instanceof Error ? error.message : '保存中にエラーが発生しました'
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -83,7 +96,10 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700"
+        >
           サービス名
         </label>
         <input
@@ -99,7 +115,10 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="amount"
+            className="block text-sm font-medium text-gray-700"
+          >
             金額
           </label>
           <input
@@ -114,7 +133,10 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
         </div>
 
         <div>
-          <label htmlFor="billingCycle" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="billingCycle"
+            className="block text-sm font-medium text-gray-700"
+          >
             支払いサイクル
           </label>
           <select
@@ -129,14 +151,19 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
             ))}
           </select>
           {errors.billingCycle && (
-            <p className="mt-1 text-sm text-red-600">{errors.billingCycle.message}</p>
+            <p className="mt-1 text-sm text-red-600">
+              {errors.billingCycle.message}
+            </p>
           )}
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="nextBillingDate" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="nextBillingDate"
+            className="block text-sm font-medium text-gray-700"
+          >
             次回支払日
           </label>
           <input
@@ -149,12 +176,17 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
           {errors.nextBillingDate && (
-            <p className="mt-1 text-sm text-red-600">{errors.nextBillingDate.message}</p>
+            <p className="mt-1 text-sm text-red-600">
+              {errors.nextBillingDate.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="category"
+            className="block text-sm font-medium text-gray-700"
+          >
             カテゴリ
           </label>
           <select
@@ -169,13 +201,18 @@ export function SubscriptionForm({ subscription }: SubscriptionFormProps) {
             ))}
           </select>
           {errors.category && (
-            <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>
+            <p className="mt-1 text-sm text-red-600">
+              {errors.category.message}
+            </p>
           )}
         </div>
       </div>
 
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="notes"
+          className="block text-sm font-medium text-gray-700"
+        >
           メモ（任意）
         </label>
         <textarea

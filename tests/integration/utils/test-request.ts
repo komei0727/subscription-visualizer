@@ -14,8 +14,10 @@ export function mockSession(userId: string, email: string) {
   }
 
   // Mock getServerSession to return our test session
-  jest.spyOn(require('next-auth'), 'getServerSession').mockImplementation(async () => session)
-  
+  jest
+    .spyOn(require('next-auth'), 'getServerSession')
+    .mockImplementation(async () => session)
+
   return session
 }
 
@@ -45,7 +47,7 @@ export function createTestRequest(
 // Parse response
 export async function parseResponse(response: Response) {
   const contentType = response.headers.get('content-type')
-  
+
   if (contentType?.includes('application/json')) {
     return {
       status: response.status,

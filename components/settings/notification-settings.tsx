@@ -13,7 +13,9 @@ export function NotificationSettings() {
         <div className="flex items-center justify-between">
           <div>
             <p className="font-medium text-gray-900">メール通知</p>
-            <p className="text-sm text-gray-500">支払い期日の前にメールで通知を受け取る</p>
+            <p className="text-sm text-gray-500">
+              支払い期日の前にメールで通知を受け取る
+            </p>
           </div>
           <button
             onClick={() => setEmailNotifications(!emailNotifications)}
@@ -30,7 +32,10 @@ export function NotificationSettings() {
         </div>
 
         <div>
-          <label htmlFor="reminder-days" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="reminder-days"
+            className="block text-sm font-medium text-gray-700"
+          >
             リマインダー日数
           </label>
           <select

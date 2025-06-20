@@ -26,7 +26,9 @@ describe('cn utility', () => {
   it('merges tailwind classes correctly', () => {
     expect(cn('px-2 py-1', 'px-3')).toBe('py-1 px-3')
     expect(cn('text-red-500', 'text-blue-500')).toBe('text-blue-500')
-    expect(cn('bg-red-500 hover:bg-red-600', 'bg-blue-500')).toBe('hover:bg-red-600 bg-blue-500')
+    expect(cn('bg-red-500 hover:bg-red-600', 'bg-blue-500')).toBe(
+      'hover:bg-red-600 bg-blue-500'
+    )
   })
 
   it('handles empty inputs', () => {
@@ -57,13 +59,21 @@ describe('cn utility', () => {
       false && 'false-condition',
       true && 'true-condition'
     )
-    
-    expect(result).toBe('base-class conditional-true array-class-1 array-class-2 true-condition')
+
+    expect(result).toBe(
+      'base-class conditional-true array-class-1 array-class-2 true-condition'
+    )
   })
 
   it('preserves important tailwind modifiers', () => {
-    expect(cn('!text-red-500', 'text-blue-500')).toBe('!text-red-500 text-blue-500')
-    expect(cn('hover:bg-red-500', 'hover:bg-blue-500')).toBe('hover:bg-blue-500')
-    expect(cn('sm:text-lg md:text-xl', 'lg:text-2xl')).toBe('sm:text-lg md:text-xl lg:text-2xl')
+    expect(cn('!text-red-500', 'text-blue-500')).toBe(
+      '!text-red-500 text-blue-500'
+    )
+    expect(cn('hover:bg-red-500', 'hover:bg-blue-500')).toBe(
+      'hover:bg-blue-500'
+    )
+    expect(cn('sm:text-lg md:text-xl', 'lg:text-2xl')).toBe(
+      'sm:text-lg md:text-xl lg:text-2xl'
+    )
   })
 })

@@ -1,8 +1,15 @@
 import { prisma } from '../utils/test-db'
 import { createTestUser, createTestSubscription } from '../utils/test-factories'
-import { mockSession, createTestRequest, parseResponse } from '../utils/test-request'
+import {
+  mockSession,
+  createTestRequest,
+  parseResponse,
+} from '../utils/test-request'
 import { GET, POST } from '@/app/api/subscriptions/route'
-import { PUT as PUT_BY_ID, DELETE as DELETE_BY_ID } from '@/app/api/subscriptions/[id]/route'
+import {
+  PUT as PUT_BY_ID,
+  DELETE as DELETE_BY_ID,
+} from '@/app/api/subscriptions/[id]/route'
 import { BillingCycle, Category } from '@prisma/client'
 import { addDays, subDays } from 'date-fns'
 
@@ -29,10 +36,13 @@ describe('Subscription Lifecycle Flow', () => {
       notes: 'Family plan',
     }
 
-    const createRequest = createTestRequest('http://localhost:3000/api/subscriptions', {
-      method: 'POST',
-      body: createData,
-    })
+    const createRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions',
+      {
+        method: 'POST',
+        body: createData,
+      }
+    )
     const createResponse = await POST(createRequest)
     const createResult = await parseResponse(createResponse)
 
@@ -40,7 +50,9 @@ describe('Subscription Lifecycle Flow', () => {
     const subscriptionId = createResult.data.id
 
     // Step 2: Read subscription from list
-    const listRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const listRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const listResponse = await GET(listRequest)
     const listResult = await parseResponse(listResponse)
 
@@ -56,11 +68,16 @@ describe('Subscription Lifecycle Flow', () => {
       notes: 'Upgraded to premium family plan',
     }
 
-    const updateRequest = createTestRequest(`http://localhost:3000/api/subscriptions/${subscriptionId}`, {
-      method: 'PUT',
-      body: updateData,
+    const updateRequest = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscriptionId}`,
+      {
+        method: 'PUT',
+        body: updateData,
+      }
+    )
+    const updateResponse = await PUT_BY_ID(updateRequest, {
+      params: { id: subscriptionId },
     })
-    const updateResponse = await PUT_BY_ID(updateRequest, { params: { id: subscriptionId } })
     const updateResult = await parseResponse(updateResponse)
 
     expect(updateResult.status).toBe(200)
@@ -68,7 +85,9 @@ describe('Subscription Lifecycle Flow', () => {
     expect(updateResult.data.amount).toBe('1480')
 
     // Step 4: Verify update persisted
-    const verifyRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const verifyRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const verifyResponse = await GET(verifyRequest)
     const verifyResult = await parseResponse(verifyResponse)
 
@@ -76,16 +95,23 @@ describe('Subscription Lifecycle Flow', () => {
     expect(verifyResult.data[0].amount).toBe('1480')
 
     // Step 5: Delete subscription
-    const deleteRequest = createTestRequest(`http://localhost:3000/api/subscriptions/${subscriptionId}`, {
-      method: 'DELETE',
+    const deleteRequest = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscriptionId}`,
+      {
+        method: 'DELETE',
+      }
+    )
+    const deleteResponse = await DELETE_BY_ID(deleteRequest, {
+      params: { id: subscriptionId },
     })
-    const deleteResponse = await DELETE_BY_ID(deleteRequest, { params: { id: subscriptionId } })
     const deleteResult = await parseResponse(deleteResponse)
 
     expect(deleteResult.status).toBe(200)
 
     // Step 6: Verify deletion
-    const finalRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const finalRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const finalResponse = await GET(finalRequest)
     const finalResult = await parseResponse(finalResponse)
 
@@ -104,7 +130,9 @@ describe('Subscription Lifecycle Flow', () => {
     })
 
     // Step 1: Verify active subscription appears in list
-    const activeRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const activeRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const activeResponse = await GET(activeRequest)
     const activeResult = await parseResponse(activeResponse)
 
@@ -112,11 +140,16 @@ describe('Subscription Lifecycle Flow', () => {
     expect(activeResult.data[0].isActive).toBe(true)
 
     // Step 2: Cancel subscription (set isActive to false)
-    const cancelRequest = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-      method: 'PUT',
-      body: { isActive: false, cancelledAt: new Date().toISOString() },
+    const cancelRequest = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscription.id}`,
+      {
+        method: 'PUT',
+        body: { isActive: false, cancelledAt: new Date().toISOString() },
+      }
+    )
+    const cancelResponse = await PUT_BY_ID(cancelRequest, {
+      params: { id: subscription.id },
     })
-    const cancelResponse = await PUT_BY_ID(cancelRequest, { params: { id: subscription.id } })
     const cancelResult = await parseResponse(cancelResponse)
 
     expect(cancelResult.status).toBe(200)
@@ -124,7 +157,9 @@ describe('Subscription Lifecycle Flow', () => {
     expect(cancelResult.data.cancelledAt).toBeTruthy()
 
     // Step 3: Verify cancelled subscription still appears in list
-    const cancelledRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const cancelledRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const cancelledResponse = await GET(cancelledRequest)
     const cancelledResult = await parseResponse(cancelledResponse)
 
@@ -132,11 +167,16 @@ describe('Subscription Lifecycle Flow', () => {
     expect(cancelledResult.data[0].isActive).toBe(false)
 
     // Step 4: Reactivate subscription
-    const reactivateRequest = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-      method: 'PUT',
-      body: { isActive: true, cancelledAt: null },
+    const reactivateRequest = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscription.id}`,
+      {
+        method: 'PUT',
+        body: { isActive: true, cancelledAt: null },
+      }
+    )
+    const reactivateResponse = await PUT_BY_ID(reactivateRequest, {
+      params: { id: subscription.id },
     })
-    const reactivateResponse = await PUT_BY_ID(reactivateRequest, { params: { id: subscription.id } })
     const reactivateResult = await parseResponse(reactivateResponse)
 
     expect(reactivateResult.status).toBe(200)
@@ -175,21 +215,26 @@ describe('Subscription Lifecycle Flow', () => {
 
     // Create all subscriptions
     for (const sub of subscriptions) {
-      const request = createTestRequest('http://localhost:3000/api/subscriptions', {
-        method: 'POST',
-        body: {
-          ...sub,
-          currency: 'JPY',
-          category: Category.OTHER,
-        },
-      })
+      const request = createTestRequest(
+        'http://localhost:3000/api/subscriptions',
+        {
+          method: 'POST',
+          body: {
+            ...sub,
+            currency: 'JPY',
+            category: Category.OTHER,
+          },
+        }
+      )
       const response = await POST(request)
       const result = await parseResponse(response)
       expect(result.status).toBe(201)
     }
 
     // Verify all subscriptions created
-    const listRequest = createTestRequest('http://localhost:3000/api/subscriptions')
+    const listRequest = createTestRequest(
+      'http://localhost:3000/api/subscriptions'
+    )
     const listResponse = await GET(listRequest)
     const listResult = await parseResponse(listResponse)
 
@@ -198,7 +243,12 @@ describe('Subscription Lifecycle Flow', () => {
 
     // Verify subscriptions are sorted by nextBillingDate (default sorting)
     const sortedNames = listResult.data.map((s: any) => s.name)
-    expect(sortedNames).toEqual(['Daily News', 'Weekly Magazine', 'Monthly Service', 'Yearly License'])
+    expect(sortedNames).toEqual([
+      'Daily News',
+      'Weekly Magazine',
+      'Monthly Service',
+      'Yearly License',
+    ])
   })
 
   it('tracks subscription payment history', async () => {
@@ -223,13 +273,18 @@ describe('Subscription Lifecycle Flow', () => {
     })
 
     // Update subscription next billing date after payment
-    const updateRequest = createTestRequest(`http://localhost:3000/api/subscriptions/${subscription.id}`, {
-      method: 'PUT',
-      body: {
-        nextBillingDate: addDays(new Date(), 30).toISOString(),
-      },
+    const updateRequest = createTestRequest(
+      `http://localhost:3000/api/subscriptions/${subscription.id}`,
+      {
+        method: 'PUT',
+        body: {
+          nextBillingDate: addDays(new Date(), 30).toISOString(),
+        },
+      }
+    )
+    const updateResponse = await PUT_BY_ID(updateRequest, {
+      params: { id: subscription.id },
     })
-    const updateResponse = await PUT_BY_ID(updateRequest, { params: { id: subscription.id } })
     const updateResult = await parseResponse(updateResponse)
 
     expect(updateResult.status).toBe(200)
@@ -278,7 +333,7 @@ describe('Subscription Lifecycle Flow', () => {
     // Simulate sending reminder (mark as sent)
     await prisma.reminder.update({
       where: { id: reminder.id },
-      data: { 
+      data: {
         isActive: false,
         sentAt: new Date(),
       },

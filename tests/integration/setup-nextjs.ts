@@ -37,9 +37,13 @@ jest.mock('next/headers', () => ({
 }))
 
 // Mock Next.js internal modules
-jest.mock('next/dist/client/components/request-async-storage.external', () => ({
-  requestAsyncStorage: mockAsyncLocalStorage,
-}), { virtual: true })
+jest.mock(
+  'next/dist/client/components/request-async-storage.external',
+  () => ({
+    requestAsyncStorage: mockAsyncLocalStorage,
+  }),
+  { virtual: true }
+)
 
 // Set up global environment
 global.requestAsyncStorage = mockAsyncLocalStorage
