@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { User } from '@/types/user'
 
 interface ProfileSettingsProps {
-  user: any
+  user: User | null
 }
 
 export function ProfileSettings({ user }: ProfileSettingsProps) {

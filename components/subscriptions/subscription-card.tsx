@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { formatDistanceToNow } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Edit, Trash2 } from 'lucide-react'
 import { Subscription } from '@/types/subscription'
 import { CATEGORY_LABELS, BILLING_CYCLE_LABELS } from '@/types/subscription'

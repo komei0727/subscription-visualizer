@@ -39,7 +39,7 @@ export function RegisterForm() {
       }
 
       router.push('/login')
-    } catch (error) {
+    } catch {
       setError('登録中にエラーが発生しました')
     } finally {
       setIsLoading(false)

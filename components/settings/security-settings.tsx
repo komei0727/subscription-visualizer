@@ -42,7 +42,7 @@ export function SecuritySettings() {
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
-    } catch (error) {
+    } catch {
       setError('パスワードの更新に失敗しました')
     } finally {
       setIsLoading(false)
